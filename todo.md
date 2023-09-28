@@ -1,0 +1,6 @@
+- [ ] input handling (keyboard) system
+- [ ] y-sorting system
+- [ ] collisions system
+- [ ] animation system
+- [x] movement system
+- [x] camera follow

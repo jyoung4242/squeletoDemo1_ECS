@@ -1,0 +1,32 @@
+{
+  "name": "myproject",
+  "version": "1.0.0",
+  "description": "my new ECS game project",
+  "main": "index.js",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "Bobs YourUncle",
+  "license": "ISC",
+  "dependencies": {
+    "@peasy-lib/peasy-assets": "latest",
+    "@peasy-lib/peasy-engine": "latest",
+    "@peasy-lib/peasy-input": "latest",
+    "@peasy-lib/peasy-states": "latest",
+    "@peasy-lib/peasy-ui": "latest",
+    "@peasy-lib/peasy-viewport": "latest",
+    "detect-collisions": "^9.2.2",
+    "lodash": "latest",
+    "uuid": "latest"
+  },
+  "devDependencies": {
+    "@types/lodash": "latest",
+    "@types/uuid": "latest",
+    "json": "latest",
+    "typescript": "latest",
+    "vite": "latest"
+  }
+}

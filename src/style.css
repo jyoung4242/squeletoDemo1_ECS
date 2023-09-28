@@ -1,0 +1,41 @@
+/*style.css*/
+body {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  background-color: #34393c;
+  color: #d0e3e9;
+  width: 100vw;
+  height: 100vh;
+}
+
+.viewport {
+  image-rendering: pixelated;
+  border: 1px whitesmoke solid;
+  border-radius: 3px;
+  background-color: #222222;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(var(--pixel-size));
+  box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  /*transition: transform 0.1s;*/
+}
+
+:root {
+  --pixel-size: 3;
+  --aspectRatio: 3/2;
+  --vpWidth: 400px;
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --pixel-size: 2;
+  }
+}
+
+@media (max-width: 800px) {
+  :root {
+    --pixel-size: 1;
+  }
+}
