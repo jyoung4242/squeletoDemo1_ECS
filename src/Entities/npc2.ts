@@ -40,6 +40,7 @@ const npcAnimation = {
 export class NPCEntity {
   static create(startingVector: Vector) {
     const id = uuidv4();
+    const myMap = "kitchen";
     return Entity.create({
       id: id,
       components: {
@@ -59,6 +60,7 @@ export class NPCEntity {
             },
           ],
         },
+        map: myMap,
         collider: {
           data: {
             id: id,
@@ -67,6 +69,7 @@ export class NPCEntity {
             offset: new Vector(8, 24),
             layer: 4,
             layerMask: [true, true, true, true, false],
+            map: myMap,
           },
         },
       },

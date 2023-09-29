@@ -5,6 +5,7 @@ import { Input } from "@peasy-lib/peasy-input";
 import { VelocityComponent } from "../Components/velocity";
 import { Vector } from "../../_Squeleto/Vector";
 import { animatedSpriteEntity } from "./animatedSprite";
+import { Signal } from "../../_Squeleto/Signals";
 
 // type definition for ensuring the entity template has the correct components
 // ComponentTypes are defined IN the components imported
@@ -17,11 +18,12 @@ export class KeyboardSystem extends System {
   rightDown: boolean = false;
   upDown: boolean = false;
   downDown: boolean = false;
+  pauseSignal: Signal;
 
   template = ``;
   public constructor() {
     super("keyboard");
-
+    this.pauseSignal = new Signal("pauseEngine");
     //Map your bindings here
     Input.map(
       {
@@ -29,10 +31,14 @@ export class KeyboardSystem extends System {
         ArrowRight: "walk_right",
         ArrowDown: "walk_down",
         ArrowUp: "walk_up",
+        " ": "pause",
       },
       (action: string, doing: boolean) => {
         if (doing) {
           switch (action) {
+            case "pause":
+              this.pauseSignal.send();
+              break;
             case "walk_left":
               this.direction = "left";
               this.state = "walk";

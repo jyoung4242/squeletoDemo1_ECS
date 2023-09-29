@@ -41,7 +41,7 @@ const heroAnimation = {
 export class HeroEntity {
   static create(startingVector: Vector) {
     let id = uuidv4();
-
+    const myMap = "kitchen";
     return Entity.create({
       id: id,
       components: {
@@ -60,8 +60,10 @@ export class HeroEntity {
             offset: new Vector(8, 24),
             layer: 3,
             layerMask: [true, true, true, false, true],
+            map: myMap,
           },
         },
+        map: myMap,
         spritesheet: {
           data: [
             {

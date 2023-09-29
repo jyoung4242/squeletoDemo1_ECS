@@ -6,8 +6,9 @@ import { Assets } from "@peasy-lib/peasy-assets";
 export class CounterEntity {
   static create(startingVector: Vector) {
     const id = uuidv4();
+    const myMap = "kitchen";
     return Entity.create({
-      id: uuidv4(),
+      id: id,
       components: {
         position: startingVector,
         zindex: 0,
@@ -16,6 +17,7 @@ export class CounterEntity {
         sprites: {
           data: [{ src: Assets.image("counter").src, offset: { x: 0, y: 0 }, size: { x: 32, y: 33 } }],
         },
+        map: myMap,
         collider: {
           data: {
             id: id,
@@ -24,6 +26,7 @@ export class CounterEntity {
             offset: new Vector(0, 8),
             layer: 2,
             layerMask: [false, false, false, true, false],
+            map: myMap,
           },
         },
       },

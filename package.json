@@ -17,7 +17,7 @@
     "@peasy-lib/peasy-input": "latest",
     "@peasy-lib/peasy-states": "latest",
     "@peasy-lib/peasy-ui": "latest",
-    "@peasy-lib/peasy-viewport": "latest",
+    "@peasy-lib/peasy-viewport": "^0.1.3",
     "detect-collisions": "^9.2.2",
     "lodash": "latest",
     "uuid": "latest"

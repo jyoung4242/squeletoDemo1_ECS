@@ -11,6 +11,8 @@ export class Entity {
     .entity {
       position: absolute;
       transition: transform 0.1s;
+      top: 0;
+      left:0;
     }
   </style>
   <entity-layer class="entity" style="transform: translate3d(\${position.x}px,\${position.y}px, 0px); width: \${size.x}px; height: \${size.y}px;z-index:\${zindex}; opacity: \${opacity}">

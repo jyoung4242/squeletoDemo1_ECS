@@ -35,10 +35,11 @@ export class CameraFollowSystem extends System {
   }
 
   cameraLerp(entity: CameraFollowEntity) {
-    let offsetX = SceneManager.viewport.size.x / 2;
-    let offsetY = SceneManager.viewport.size.y / 2;
+    let offsetX = 0; //SceneManager.viewport.size.x / 2;
+    let offsetY = 0; //SceneManager.viewport.size.y / 2;
     SceneManager.viewport.camera.x = entity.position.x - offsetX + entity.size.x / 2;
     SceneManager.viewport.camera.y = entity.position.y - offsetY + entity.size.y / 2;
+
     SceneManager.viewport.update();
   }
 }

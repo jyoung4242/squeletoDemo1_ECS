@@ -16,6 +16,7 @@ import { CameraFollowComp } from "./cameraFollow";
 import { VelocityComp } from "./velocity";
 import { KeyboardComp } from "./keyboard";
 import { ColliderComp } from "./collider";
+import { MapComp } from "./entitymap";
 
 // The template component is demonstrated by default, you'll probably
 // want to replace it
@@ -32,5 +33,6 @@ export function LoadComponents() {
     new VelocityComp(),
     new KeyboardComp(),
     new ColliderComp(),
+    new MapComp(),
   ];
 }

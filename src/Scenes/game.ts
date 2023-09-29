@@ -33,12 +33,16 @@ import { CameraFollowSystem } from "../Systems/CameraFollow";
 import { MovementSystem } from "../Systems/movement";
 import { KeyboardSystem } from "../Systems/keyboard";
 import { AnimatedSpriteSystem } from "../Systems/animatedSprite";
-import { ColliderEntity, CollisionDetectionSystem, colliderBody } from "../Systems/collisionDetection";
+import { ColliderEntity, CollisionDetectionSystem } from "../Systems/collisionDetection";
+import { RenderSystem } from "../Systems/Rendering";
+import { Signal } from "../../_Squeleto/Signals";
 
 // All Squeleto Scenes are an extension of the Scene Class
 export class Game extends Scene {
+  pauseSignal: Signal = new Signal("pauseEngine");
   name: string = "Game";
   entities: Entity[] = [];
+  renderedEntities: Entity[] = [];
   Systems: System[] = [];
   //****************************************** */
   // dm name here is critical for peasy bindings, cause they have to match what's in the plugin
@@ -64,12 +68,15 @@ export class Game extends Scene {
    * plug-ins are inserted after the renderer to ensure
    * they render on top of the game
    ****************************************************/
-  public template = `<scene-layer class="scene" style="width: 100%; height: 100%; position: absolute; top: 0; left:0; color: white;">
-      < \${ entity === } \${ entity <=* entities }>
-      < \${ System === } \${ System <=* Systems }>
-      ${this.dm.template}
-      ${this.psystems.template}
+  public template = `<scene-layer class="scene" style="width: 100%; height: 100%; position: relative; top: 0; left:0; color: white;">
+  
+  < \${ System === } \${ System <=* Systems }>
   </scene-layer>`;
+
+  /*
+   ${this.dm.template}
+      ${this.psystems.template}
+  */
 
   bgm: Chiptune | undefined | null;
 
@@ -102,9 +109,21 @@ export class Game extends Scene {
     // *************************************
 
     SceneManager.viewport.addLayers([
-      { name: "maplower", parallax: 0, image: Assets.image("lower").src, size: { x: 192, y: 192 } },
-      { name: "game", parallax: 0 },
-      { name: "mapupper", parallax: 0, image: Assets.image("DemoUpper").src, size: { x: 192, y: 192 } },
+      {
+        name: "maplower",
+        parallax: 0,
+        image: Assets.image("lower").src,
+        size: { x: 192, y: 192 },
+        position: { x: 192 / 2, y: 192 / 2 },
+      },
+      { name: "game", parallax: 0, size: { x: 0, y: 0 } },
+      {
+        name: "mapupper",
+        parallax: 0,
+        image: Assets.image("DemoUpper").src,
+        size: { x: 192, y: 192 },
+        position: { x: 192 / 2, y: 192 / 2 },
+      },
     ]);
     let layers = SceneManager.viewport.layers;
     const game = layers.find(lyr => lyr.name == "game");
@@ -127,7 +146,14 @@ export class Game extends Scene {
 
     dc.loadEntities(this.entities as ColliderEntity[]);
 
-    this.Systems.push(new CameraFollowSystem(), new MovementSystem(), new KeyboardSystem(), new AnimatedSpriteSystem(), dc);
+    this.Systems.push(
+      new CameraFollowSystem(),
+      new MovementSystem(),
+      new KeyboardSystem(),
+      new AnimatedSpriteSystem(),
+      new RenderSystem("kitchen"),
+      dc
+    );
 
     // Turn on BGM
     this.bgm = new Chiptune("0x090100700135583f70");
@@ -135,7 +161,12 @@ export class Game extends Scene {
     // **************************************
     // START your engines!
     // **************************************
-    Engine.create({ started: true, fps: 60, callback: this.update });
+    const engine = Engine.create({ started: true, fps: 60, callback: this.update });
+    this.pauseSignal.listen(() => {
+      console.log("pausing");
+
+      engine.pause();
+    });
   }
 
   update = (deltaTime: number) => {

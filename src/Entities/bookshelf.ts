@@ -6,6 +6,7 @@ import { Assets } from "@peasy-lib/peasy-assets";
 export class bookshelfEntity {
   static create(startingVector: Vector) {
     const id = uuidv4();
+    const myMap = "kitchen";
     return Entity.create({
       id: id,
       components: {
@@ -16,6 +17,7 @@ export class bookshelfEntity {
         sprites: {
           data: [{ src: Assets.image("bookshelf").src, offset: { x: 0, y: 0 }, size: { x: 32, y: 26 } }],
         },
+        map: myMap,
         collider: {
           data: {
             id: id,
@@ -24,6 +26,7 @@ export class bookshelfEntity {
             offset: new Vector(0, 16),
             layer: 2,
             layerMask: [false, false, false, true, false],
+            map: myMap,
           },
         },
       },

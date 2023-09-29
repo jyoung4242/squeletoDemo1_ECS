@@ -11,6 +11,7 @@ export interface IColliderComponent {
     size: Vector;
     layerMask: boolean[];
     layer: number;
+    map: string;
   };
 }
 export type ColliderType = {
@@ -19,6 +20,7 @@ export type ColliderType = {
   layers: boolean[];
   colliderBody: Body | undefined;
   offset: Vector;
+  map: string;
 };
 
 // this is the exported interface that is used in systems modules
@@ -34,6 +36,7 @@ export class ColliderComp extends Component {
     layers: [],
     colliderBody: undefined,
     offset: new Vector(),
+    map: "",
   };
   public constructor() {
     //@ts-ignore
@@ -57,13 +60,13 @@ export class ColliderComp extends Component {
     let thisEntity;
     switch (this.value.layerAssignment) {
       case 2: //static body
-        thisEntity = createStaticBody(entityposition, data.data.size, this.value.id);
+        thisEntity = createStaticBody(entityposition, data.data.size, this.value.id, data.data.map);
         break;
       case 3: //players
-        thisEntity = createPlayableBody(entityposition, data.data.size, this.value.id);
+        thisEntity = createPlayableBody(entityposition, data.data.size, this.value.id, data.data.map);
         break;
       case 4: //npc
-        thisEntity = createNPCBody(entityposition, data.data.size, this.value.id);
+        thisEntity = createNPCBody(entityposition, data.data.size, this.value.id, data.data.map);
         break;
       default: //something else that shouldn't
         thisEntity = undefined;
@@ -73,23 +76,26 @@ export class ColliderComp extends Component {
   }
 }
 
-function createPlayableBody(position: Vector, size: Vector, id: string) {
+function createPlayableBody(position: Vector, size: Vector, id: string, map: string) {
   return Object.assign(new Box({ x: position.x, y: position.y }, size.x, size.y, {}), {
     type: "player",
     id: id,
+    map: map,
   });
 }
 
-function createStaticBody(position: Vector, size: Vector, id: string) {
+function createStaticBody(position: Vector, size: Vector, id: string, map: string) {
   return Object.assign(new Box({ x: position.x, y: position.y }, size.x, size.y, { isStatic: true }), {
     type: "static",
     id: id,
+    map: map,
   });
 }
 
-function createNPCBody(position: Vector, size: Vector, id: string) {
+function createNPCBody(position: Vector, size: Vector, id: string, map: string) {
   return Object.assign(new Box({ x: position.x, y: position.y }, size.x, size.y, { isStatic: true }), {
     type: "npc",
     id: id,
+    map: map,
   });
 }

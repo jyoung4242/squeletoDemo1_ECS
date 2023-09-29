@@ -22,6 +22,12 @@ body {
   /*transition: transform 0.1s;*/
 }
 
+.scene {
+  display: block;
+
+  position: relative;
+}
+
 :root {
   --pixel-size: 3;
   --aspectRatio: 3/2;
