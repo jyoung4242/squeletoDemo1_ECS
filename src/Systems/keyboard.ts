@@ -19,11 +19,17 @@ export class KeyboardSystem extends System {
   upDown: boolean = false;
   downDown: boolean = false;
   pauseSignal: Signal;
+  isCutscenePlaying: boolean = false;
+  cutsceneSignal: Signal;
 
   template = ``;
   public constructor() {
     super("keyboard");
     this.pauseSignal = new Signal("pauseEngine");
+    this.cutsceneSignal = new Signal("cutscene");
+    this.cutsceneSignal.listen((details: CustomEvent) => {
+      this.isCutscenePlaying = details.detail.params[0];
+    });
     //Map your bindings here
     Input.map(
       {
@@ -34,7 +40,7 @@ export class KeyboardSystem extends System {
         " ": "pause",
       },
       (action: string, doing: boolean) => {
-        if (doing) {
+        if (doing && !this.isCutscenePlaying) {
           switch (action) {
             case "pause":
               this.pauseSignal.send();

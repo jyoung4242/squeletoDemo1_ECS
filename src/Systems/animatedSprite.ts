@@ -14,7 +14,7 @@ export class AnimatedSpriteSystem extends System {
   }
 
   public processEntity(entity: animatedSpriteEntity): boolean {
-    return entity.spritesheet != null && entity.keyboard != null;
+    return entity.spritesheet != null;
   }
 
   // update routine that is called by the gameloop engine
@@ -26,8 +26,9 @@ export class AnimatedSpriteSystem extends System {
         if (!spriteLayer.animation || spriteLayer.animationTik == undefined) return;
 
         //get current sequence
-
-        spriteLayer.currentSequence = `${entity.keyboard.state}-${entity.keyboard.direction}`;
+        if (entity.keyboard) {
+          spriteLayer.currentSequence = `${entity.keyboard.state}-${entity.keyboard.direction}`;
+        }
 
         spriteLayer.animationTik++;
         if (spriteLayer.animationTik >= spriteLayer.animation.frameRate) {

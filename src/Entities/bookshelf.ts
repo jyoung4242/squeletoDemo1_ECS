@@ -12,6 +12,7 @@ export class bookshelfEntity {
       components: {
         position: startingVector,
         zindex: 0,
+        render: true,
         size: { data: [32, 26] },
         opacity: 1,
         sprites: {
@@ -21,11 +22,10 @@ export class bookshelfEntity {
         collider: {
           data: {
             id: id,
+            type: "static",
             startingPosition: startingVector,
             size: new Vector(32, 12),
             offset: new Vector(0, 16),
-            layer: 2,
-            layerMask: [false, false, false, true, false],
             map: myMap,
           },
         },

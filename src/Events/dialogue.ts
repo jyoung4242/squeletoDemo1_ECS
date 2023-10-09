@@ -1,6 +1,5 @@
-import { GameEvent } from "../../parkinglog/EventManager"; //"../../src/components/EventManager";
-import { GameObject } from "../../parkinglog/GameObject"; //../../src/components/GameObject";
-import { Conversation, DialogManager } from "../PlugIns/DialogueManager";
+import { GameEvent } from "../Systems/Events"; //"../../src/components/EventManager";
+//import { Conversation, DialogManager } from "../PlugIns/DialogueManager";
 import { Signal } from "../../_Squeleto/Signals";
 
 /**
@@ -10,7 +9,7 @@ import { Signal } from "../../_Squeleto/Signals";
  */
 
 export class DialogEvent extends GameEvent {
-  who: GameObject | string | undefined;
+  /* who: GameObject | string | undefined;
   message: Conversation;
   dm: any;
   resolution: ((value: void | PromiseLike<void>) => void) | undefined;
@@ -41,5 +40,5 @@ export class DialogEvent extends GameEvent {
     }
     this.dialogSignal.stopListening();
     if (this.resolution) this.resolution();
-  };
+  }; */
 }

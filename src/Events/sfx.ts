@@ -1,6 +1,4 @@
-import { GameEvent } from "../../parkinglog/EventManager";
-import { GameObject } from "../../parkinglog/GameObject";
-import { SFX } from "../../_Squeleto/Sound API";
+import { GameEvent } from "../Systems/Events";
 
 /**
  * This is a event for the asynchronous playing of a sound effect(SFX)
@@ -9,7 +7,7 @@ import { SFX } from "../../_Squeleto/Sound API";
  */
 
 export class playSFX extends GameEvent {
-  who: GameObject | undefined;
+  /* who: GameObject | undefined;
   sound: string;
   resolution: ((value: void | PromiseLike<void>) => void) | undefined;
 
@@ -27,5 +25,5 @@ export class playSFX extends GameEvent {
       SFX.play(this.sound);
       resolve();
     });
-  }
+  } */
 }

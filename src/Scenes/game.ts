@@ -36,6 +36,8 @@ import { AnimatedSpriteSystem } from "../Systems/animatedSprite";
 import { ColliderEntity, CollisionDetectionSystem } from "../Systems/collisionDetection";
 import { RenderSystem } from "../Systems/Rendering";
 import { Signal } from "../../_Squeleto/Signals";
+import { EventSystem } from "../Systems/Events";
+import { StoryFlagSystem } from "../Systems/StoryFlags";
 
 // All Squeleto Scenes are an extension of the Scene Class
 export class Game extends Scene {
@@ -136,27 +138,27 @@ export class Game extends Scene {
     this.entities.push(bookshelfEntity.create(new Vector(48, 48)));
     this.entities.push(CounterEntity.create(new Vector(112, 96)));
     let hero = HeroEntity.create(new Vector(60, 60));
-    console.log(hero);
 
     this.entities.push(hero);
     this.entities.push(NPCEntity.create(new Vector(32, 96)));
 
     const dc = new CollisionDetectionSystem([Kitchen], "kitchen", false);
-    console.log(this.entities);
-
     dc.loadEntities(this.entities as ColliderEntity[]);
 
     this.Systems.push(
       new CameraFollowSystem(),
+      dc,
       new MovementSystem(),
       new KeyboardSystem(),
       new AnimatedSpriteSystem(),
       new RenderSystem("kitchen"),
-      dc
+      new EventSystem()
     );
 
     // Turn on BGM
-    this.bgm = new Chiptune("0x090100700135583f70");
+    //this.bgm = new Chiptune("0x090100700135583f70");
+
+    StoryFlagSystem.setStoryFlagValue("startOfGame", true);
 
     // **************************************
     // START your engines!
@@ -164,7 +166,6 @@ export class Game extends Scene {
     const engine = Engine.create({ started: true, fps: 60, callback: this.update });
     this.pauseSignal.listen(() => {
       console.log("pausing");
-
       engine.pause();
     });
   }

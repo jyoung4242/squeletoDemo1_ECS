@@ -5,6 +5,13 @@
 // * walls[] and triggers []
 //**************************************
 
+import { LogEvent } from "../Events/log";
+import { WaitEvent } from "../Events/wait";
+import { ChangeMap } from "../Events/ChangeMap";
+import { ChangeBehaviorEvent } from "../Events/changeBehavior";
+import { NPCEntity } from "../Entities/npc2";
+import { ResetMapEvent } from "../Events/resetMapTrigger";
+
 export class Kitchen {
   static name = "kitchen";
   static walls = [
@@ -86,15 +93,40 @@ export class Kitchen {
       w: 14,
       h: 5,
       color: "yellow",
-      actions: [],
+      id: "kitchen top closet",
+      mode: "latch",
+      actionStatus: "idle",
+      actions: [
+        { event: LogEvent, params: ["I hit the map trigger"] },
+        { event: WaitEvent, params: [1000] },
+        { event: LogEvent, params: ["now im just seeing"] },
+        { event: WaitEvent, params: [1000] },
+        { event: LogEvent, params: ["if my cutscenes"] },
+        { event: WaitEvent, params: [1000] },
+        { event: LogEvent, params: ["executing properly"] },
+      ],
+    },
+    {
+      x: 79,
+      y: 152,
+      w: 16,
+      h: 5,
+      id: "kitchen bottom door reset",
+      color: "yellow",
+      mode: "reset",
+      actionStatus: "idle",
+      actions: [ResetMapEvent.create(null, ["kitchen bottom door", "kitchen"])],
     },
     {
       x: 79,
       y: 172,
       w: 16,
       h: 5,
+      id: "kitchen bottom door",
       color: "yellow",
-      actions: [],
+      actionStatus: "idle",
+      mode: "latch",
+      actions: [ChangeBehaviorEvent.create(null, ["Larry", "standing"])],
     },
   ];
 }

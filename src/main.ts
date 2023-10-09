@@ -10,6 +10,9 @@ import { LoadComponents } from "./Components/_components";
 import { Login } from "./Scenes/login";
 import { Game } from "./Scenes/game";
 
+//StoryFlags(global)
+import { StoryFlagSystem } from "./Systems/StoryFlags";
+
 // Setting up Viewport with a HUD layer and the Game layer
 const VIEWPORT_WIDTH = 400;
 const ASPECT_RATIO = 16 / 9;
@@ -21,6 +24,9 @@ SceneManager.viewport = viewport;
 
 // Components
 LoadComponents();
+
+//Setup SToryflags
+StoryFlagSystem.init();
 
 //Load Scenes
 let sceneMgr = new SceneManager();

@@ -14,6 +14,7 @@ export class CounterEntity {
         zindex: 0,
         size: { data: [32, 33] },
         opacity: 1,
+        render: true,
         sprites: {
           data: [{ src: Assets.image("counter").src, offset: { x: 0, y: 0 }, size: { x: 32, y: 33 } }],
         },
@@ -24,8 +25,7 @@ export class CounterEntity {
             startingPosition: startingVector,
             size: new Vector(32, 24),
             offset: new Vector(0, 8),
-            layer: 2,
-            layerMask: [false, false, false, true, false],
+            type: "static",
             map: myMap,
           },
         },

@@ -9,13 +9,27 @@ import { Vector } from "../../_Squeleto/Vector";
 import { SizeComponent } from "../Components/sizeComponent";
 import { PositionComponent } from "../Components/positionComponent";
 import { UI } from "@peasy-lib/peasy-ui";
-import { map, over } from "lodash";
 import { MapComponent } from "../Components/entitymap";
+import { VelocityComponent } from "../Components/velocity";
+import { over } from "lodash";
+
 // type definition for ensuring the entity template has the correct components
 // ComponentTypes are defined IN the components imported
 export type ColliderEntity = Entity & ColliderComponent & SizeComponent & PositionComponent & MapComponent;
 
 export type colliderBody = Box & { type: string; layerAssignment: number; layers: boolean[]; map: "" };
+
+type npcColliderBody = Box & ColliderComponent & PositionComponent & VelocityComponent;
+
+enum collisionResolutionType {
+  wall,
+  static,
+  bounceback,
+  destroy,
+  push,
+  mapevent,
+  npc,
+}
 
 export class CollisionDetectionSystem extends System {
   template: string = `
@@ -24,6 +38,8 @@ export class CollisionDetectionSystem extends System {
   mapdata: any[];
   entities: ColliderEntity[] = [];
   mapChange: Signal;
+  eventSignal: Signal;
+  mapTriggerResetSignal: Signal;
   dc: dcSystem;
   currentMap: string = "";
   cnv: HTMLCanvasElement | undefined;
@@ -37,6 +53,9 @@ export class CollisionDetectionSystem extends System {
     this.debug = debug;
     this.mapChange = new Signal("mapchange");
     this.mapChange.listen(this.mapchange);
+    this.eventSignal = new Signal("mapEvent");
+    this.mapTriggerResetSignal = new Signal("resetMapTrigger");
+    this.mapTriggerResetSignal.listen(this.resetMapTrigger);
     this.currentMap = startingMap;
     this.loadWallsTriggers();
     UI.queue(() => {
@@ -45,7 +64,7 @@ export class CollisionDetectionSystem extends System {
   }
 
   mapchange(signalData: any) {
-    console.log("mapchange", signalData.details.params);
+    console.log("mapchange", signalData.detail.params);
     //find new mapname in mapData
     const newmap = signalData.details[2];
     const mapIndex = this.mapdata.findIndex(map => map.name == newmap);
@@ -55,6 +74,16 @@ export class CollisionDetectionSystem extends System {
     this.eraseEntityData();
     this.loadWallsTriggers();
   }
+
+  resetMapTrigger = (signalData: any) => {
+    let [id, mapName] = signalData.detail.params;
+    if (mapName != this.currentMap) return;
+    let entities = this.dc.all();
+    //@ts-ignore
+    let mapTrigger = entities.find(ent => ent.id == id);
+    //@ts-ignore
+    mapTrigger.actionStatus = "idle";
+  };
 
   eraseEntityData() {
     this.dc.clear();
@@ -67,11 +96,20 @@ export class CollisionDetectionSystem extends System {
     currentMapData.walls.forEach((wall: { x: number; y: number; w: number; h: number }) => {
       this.dc.insert(this.createWallBody(new Vector(wall.x, wall.y), new Vector(wall.w, wall.h), this.currentMap));
     });
-    currentMapData.triggers.forEach((trigger: { x: number; y: number; w: number; h: number; actions: any[] }) => {
-      this.dc.insert(
-        this.createTriggerBody(new Vector(trigger.x, trigger.y), new Vector(trigger.w, trigger.h), trigger.actions, this.currentMap)
-      );
-    });
+    currentMapData.triggers.forEach(
+      (trigger: { x: number; y: number; w: number; h: number; actions: any[]; id: string; mode: string }) => {
+        this.dc.insert(
+          this.createTriggerBody(
+            new Vector(trigger.x, trigger.y),
+            new Vector(trigger.w, trigger.h),
+            trigger.actions,
+            this.currentMap,
+            trigger.id,
+            trigger.mode
+          )
+        );
+      }
+    );
   }
 
   createWallBody(position: Vector, size: Vector, map: string): any {
@@ -83,26 +121,25 @@ export class CollisionDetectionSystem extends System {
     });
   }
 
-  createTriggerBody(position: Vector, size: Vector, actions: any[], map: string): any {
+  createTriggerBody(position: Vector, size: Vector, actions: any[], map: string, id: string, mode: string): any {
     return Object.assign(new Box({ x: position.x, y: position.y }, size.x, size.y, { isStatic: true }), {
       type: "trigger",
       level: 1,
       mask: [false, false, false, true, true],
       actions: [...actions],
       map: map,
+      actionStatus: "idle",
+      id: id,
+      mode: mode,
     });
   }
 
   loadEntities(entities: ColliderEntity[]) {
-    //TODO- need to add current map to this so only entities in current map are considered
-    console.log(entities);
-
     entities.forEach(ent => {
       if (ent.collider != null) {
         this.dc.insert(ent.collider.colliderBody as Box);
       }
     });
-    console.log(this.dc);
   }
 
   // update routine that is called by the gameloop engine
@@ -116,26 +153,132 @@ export class CollisionDetectionSystem extends System {
       this.ctx.stroke();
     }
 
+    entities.forEach(ent => (ent.collider.isColliding = new Vector(0, 0)));
     this.dc.checkAll((response: Response) => {
       const { a, b, overlapV } = response;
 
-      if (a.type == "player") {
-        //get a parent
-        const parent = entities.find(ent => ent.id == a.id);
-
-        if (parent) {
-          if (b.type == "wall" && b.map == parent.map) {
-            response.a.setPosition(response.a.x - overlapV.x, response.a.y - overlapV.y);
-            parent.position = parent?.position.subtract(new Vector(overlapV.x, overlapV.y));
-          } else if (b.type == "static" && b.map == parent.map) {
-            response.a.setPosition(response.a.x - overlapV.x, response.a.y - overlapV.y);
-            parent.position = parent?.position.subtract(new Vector(overlapV.x, overlapV.y));
-          } else if (b.type == "npc" && b.map == parent.map) {
-            response.a.setPosition(response.a.x - overlapV.x, response.a.y - overlapV.y);
-            parent.position = parent?.position.subtract(new Vector(overlapV.x, overlapV.y));
-          }
-        }
-      }
+      if (a.type == "player" && b.type == "static")
+        collisionResolution(a, b, entities, overlapV, response, collisionResolutionType.static);
+      else if (b.type == "player" && a.type == "static")
+        collisionResolution(b, a, entities, overlapV, response, collisionResolutionType.static);
+      else if (a.type == "player" && b.type == "wall")
+        collisionResolution(a, b, entities, overlapV, response, collisionResolutionType.wall);
+      else if (b.type == "player" && a.type == "wall")
+        collisionResolution(b, a, entities, overlapV, response, collisionResolutionType.wall);
+      else if (a.type == "player" && b.type == "trigger")
+        collisionResolution(a, b, entities, overlapV, response, collisionResolutionType.mapevent);
+      else if (b.type == "player" && a.type == "trigger")
+        collisionResolution(b, a, entities, overlapV, response, collisionResolutionType.mapevent);
+      else if (a.type == "player" && b.type == "npc")
+        collisionResolution(a, b, entities, overlapV, response, collisionResolutionType.npc);
+      else if (b.type == "player" && a.type == "npc")
+        collisionResolution(b, a, entities, overlapV, response, collisionResolutionType.npc);
     });
   }
 }
+
+const collisionResolution = (
+  a: any,
+  b: any,
+  entities: ColliderEntity[],
+  overlap: SAT.Vector,
+  response: Response,
+  method: collisionResolutionType
+) => {
+  if (!a || !b) return;
+  let entityA;
+  let entityB;
+  let eventSignal = new Signal("Event");
+
+  switch (method) {
+    case collisionResolutionType.wall:
+      entityA = entities.find(e => e.collider.colliderBody == a);
+      if (entityA == undefined || !entityA.collider.colliderBody) return;
+      entityA.position.x = entityA.position.x - overlap.x;
+      entityA.position.y = entityA.position.y - overlap.y;
+      entityA.collider.colliderBody.setPosition(
+        entityA.collider.colliderBody.x - overlap.x,
+        entityA.collider.colliderBody.y - overlap.y
+      );
+      break;
+    case collisionResolutionType.static:
+      entityA = entities.find(e => e.collider.colliderBody == a);
+      if (entityA == undefined || !entityA.collider.colliderBody) return;
+      entityA.position.x = entityA.position.x - overlap.x;
+      entityA.position.y = entityA.position.y - overlap.y;
+
+      entityA.collider.colliderBody.setPosition(
+        entityA.collider.colliderBody.x - overlap.x,
+        entityA.collider.colliderBody.y - overlap.y
+      );
+      break;
+    case collisionResolutionType.npc:
+      //@ts-ignore
+      let npc: npcColliderBody | undefined = entities.find(e => e.collider.colliderBody == b);
+
+      if (!npc) return;
+
+      if (npc.velocity.x == 0 && npc.velocity.y == 0) {
+        entityA = entities.find(e => e.collider.colliderBody == a);
+        if (!entityA) return;
+
+        //stop moving
+        a.setPosition(a.x - overlap.x, a.y - overlap.y);
+        entityA.position.x = entityA.position.x - overlap.x;
+        entityA.position.y = entityA.position.y - overlap.y;
+      } else if (npc.velocity.x != 0) {
+        if (response.overlapN.x != 0) {
+          entityB = entities.find(e => e.collider.colliderBody == b);
+          if (!entityB) return;
+
+          //stop moving
+          b.setPosition(b.x + overlap.x, b.y + overlap.y);
+          entityB.position.x = entityB.position.x + overlap.x;
+          entityB.position.y = entityB.position.y + overlap.y;
+        } else {
+          entityA = entities.find(e => e.collider.colliderBody == a);
+          if (!entityA) return;
+
+          //stop moving
+          a.setPosition(a.x - overlap.x, a.y - overlap.y);
+          entityA.position.x = entityA.position.x - overlap.x;
+          entityA.position.y = entityA.position.y - overlap.y;
+        }
+      } else if (npc.velocity.y != 0) {
+        if (response.overlapN.y != 0) {
+          entityB = entities.find(e => e.collider.colliderBody == b);
+          if (!entityB) return;
+
+          //stop moving
+          b.setPosition(b.x + overlap.x, b.y + overlap.y);
+          entityB.position.x = entityB.position.x + overlap.x;
+          entityB.position.y = entityB.position.y + overlap.y;
+        } else {
+          entityA = entities.find(e => e.collider.colliderBody == a);
+          if (!entityA) return;
+
+          //stop moving
+          a.setPosition(a.x - overlap.x, a.y - overlap.y);
+          entityA.position.x = entityA.position.x - overlap.x;
+          entityA.position.y = entityA.position.y - overlap.y;
+        }
+      }
+
+      break;
+    case collisionResolutionType.bounceback:
+    case collisionResolutionType.destroy:
+    case collisionResolutionType.push:
+    case collisionResolutionType.mapevent:
+      entityA = entities.find(e => e.collider.colliderBody == a);
+      if (entityA == undefined || !entityA.collider.colliderBody) return;
+
+      if (b.actionStatus == "idle") {
+        console.log(b.mode);
+
+        if (b.mode == "latch") b.actionStatus = "active";
+        if (b.actions.length > 0) eventSignal.send([b.actions]);
+      }
+
+      break;
+  }
+};

@@ -52,14 +52,14 @@ export class HeroEntity {
         camerafollow: { data: true },
         velocity: { data: new Vector(0, 0) },
         keyboard: { data: true },
+        render: true,
         collider: {
           data: {
             id: id,
             startingPosition: startingVector,
             size: new Vector(16, 8),
             offset: new Vector(8, 24),
-            layer: 3,
-            layerMask: [true, true, true, false, true],
+            type: "players",
             map: myMap,
           },
         },

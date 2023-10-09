@@ -1,17 +1,24 @@
+import { Signal } from "../../_Squeleto/Signals";
 import { Entity } from "../../_Squeleto/entity";
 import { System } from "../../_Squeleto/system";
 import { ColliderComponent } from "../Components/collider";
 import { PositionComponent } from "../Components/positionComponent";
 import { VelocityComponent } from "../Components/velocity";
+import { KeyboardComponent } from "../Components/keyboard";
+import { direction } from "../Events/walk";
+import { Vector } from "../../_Squeleto/Vector";
+import { LogEvent } from "../Events/log";
 
 // type definition for ensuring the entity template has the correct components
 // ComponentTypes are defined IN the components imported
-export type MovementEntity = Entity & PositionComponent & VelocityComponent & ColliderComponent;
+export type MovementEntity = Entity & PositionComponent & VelocityComponent & ColliderComponent & KeyboardComponent;
 
 export class MovementSystem extends System {
+  moveSignal: Signal;
   template = ``;
   public constructor() {
     super("movement");
+    this.moveSignal = new Signal("moved");
   }
 
   public processEntity(entity: MovementEntity): boolean {
@@ -30,9 +37,31 @@ export class MovementSystem extends System {
         return;
       }
 
-      entity.position = entity.position.add(entity.velocity);
-      const cboyPosition = entity.position.add(entity.collider.offset);
-      entity.collider.colliderBody?.setPosition(cboyPosition.x, cboyPosition.y);
+      let normalizedCollision: Vector;
+      let adjustedVelocity: Vector;
+      if (!entity.collider.isColliding.zero) {
+        normalizedCollision = entity.collider.isColliding.multiply(entity.velocity);
+        adjustedVelocity = entity.velocity.add(normalizedCollision);
+      } else {
+        adjustedVelocity = entity.velocity;
+      }
+      if (!adjustedVelocity.zero) {
+        entity.position = entity.position.add(entity.velocity);
+        const cboyPosition = entity.position.add(entity.collider.offset);
+        entity.collider.colliderBody?.setPosition(cboyPosition.x, cboyPosition.y);
+        this.moveSignal.send([entity.id, entity.velocity.magnitude]);
+      }
     });
+  }
+
+  isPathClear(entity: MovementEntity, entities: MovementEntity[], directionVector: Vector, proximityMagnitude: number): boolean {
+    //get list of entities that are close to Entity by distance
+    const closeEntities = entities.filter((ent: MovementEntity) => {
+      if (ent == entity) return false;
+      const distance = ent.position.subtract(entity.position).magnitude;
+      return distance < proximityMagnitude;
+    });
+    //for each close entity, get compare direction vector to
+    return true;
   }
 }

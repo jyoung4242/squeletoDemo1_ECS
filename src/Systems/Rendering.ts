@@ -31,18 +31,4 @@ export class RenderSystem extends System {
       entity.zindex = Math.floor((entity.position.y + entity.collider.offset.y) * 1000);
     });
   }
-
-  /* const tempEntities = entities.filter(ent => {
-      return ent.collider.colliderBody && ent.map == this.currentMap;
-    });
-    console.log("in", tempEntities);
-
-    tempEntities.sort(function (a, b) {
-      //@ts-ignore
-      return b.position.y + b.collider.offset.y - a.position.y + a.collider.offset.y;
-    });
-
-    console.log("out", tempEntities);
-    this.entities = [...tempEntities]; 
-  }*/
 }

@@ -1,46 +1,39 @@
-import { direction } from "../../parkinglog/CollisionManager";
-import { GameEvent } from "../../parkinglog/EventManager";
-import { GameObject } from "../../parkinglog/GameObject";
+import { GameEvent } from "../Systems/Events";
+import { Entity } from "../../_Squeleto/entity";
 import { Signal } from "../../_Squeleto/Signals";
+import { SpriteSheetComponent } from "../Components/spritesheet";
+import { direction } from "./walk";
+
+/**
+ * This is a event for the asynchronous 'standing' of the player or NPC
+ * this event engages a native 'startBehavior' method of the GameObject
+ * and passes the 'stand' string as the behavior parameter, and a duration number (milliseconds)
+ * this resolves from a Signal from the gameobject that the 'standCompleted'
+ * has been completed
+ */
 
 export class StandEvent extends GameEvent {
-  who: GameObject | undefined;
   direction: direction;
   duration: number;
-  resolution: ((value: void | PromiseLike<void>) => void) | undefined;
-  signalStand: Signal | null;
 
-  /**
-   * This is a event for the asynchronous 'standing' of the player or NPC
-   * this event engages a native 'startBehavior' method of the GameObject
-   * and passes the 'stand' string as the behavior parameter, and a duration number (milliseconds)
-   * this resolves from a Signal from the gameobject that the 'standCompleted'
-   * has been completed
-   */
-
-  constructor(direction: direction, duration: number) {
-    super("stand");
-    this.who = undefined;
-    this.direction = direction;
-    this.duration = duration;
-    this.signalStand = null;
+  constructor(who: Entity | null, params: [...any]) {
+    super(who, params);
+    this.direction = params[0];
+    this.duration = params[1];
   }
 
-  init(who: GameObject): Promise<void> {
+  init(): Promise<void> {
+    this.eventStatus = "running";
     return new Promise(resolve => {
-      this.who = who;
-      this.signalStand = new Signal("standCompleted", this.who);
-      this.signalStand.listen(this.completeHandler);
-      this.who.startBehavior("stand", this.direction, this.duration);
-      this.resolution = resolve;
+      if (this.who && Object.hasOwn(this.who, "spritesheet")) {
+        //@ts-ignore
+        this.who.spritesheet[1].currentSequence = `idle-${this.direction}`;
+      }
+
+      setTimeout(() => {
+        this.eventStatus = "complete";
+        resolve();
+      }, this.duration);
     });
   }
-
-  completeHandler = (e: any) => {
-    if (e.detail.who === this.who?.id) {
-      if (this.signalStand) this.signalStand.stopListening();
-      this.signalStand = null;
-      if (this.resolution) this.resolution();
-    }
-  };
 }

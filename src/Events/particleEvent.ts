@@ -1,6 +1,6 @@
-import { GameEvent } from "../../parkinglog/EventManager";
-import { GameObject } from "../../parkinglog/GameObject";
-import { ParticleSystem, EmitterConfig } from "../PlugIns/Particles";
+import { GameEvent } from "../Systems/Events";
+
+//import { ParticleSystem, EmitterConfig } from "../PlugIns/Particles";
 
 /**
  * This is a event for the asynchronous console logging
@@ -10,7 +10,7 @@ import { ParticleSystem, EmitterConfig } from "../PlugIns/Particles";
  */
 
 export class particleEvent extends GameEvent {
-  who: GameObject | undefined;
+  /* who: GameObject | undefined;
   ps: ParticleSystem;
 
   resolution: ((value: void | PromiseLike<void>) => void) | undefined;
@@ -29,5 +29,5 @@ export class particleEvent extends GameEvent {
       this.ps.startEvent();
       resolve();
     });
-  }
+  } */
 }

@@ -5,19 +5,17 @@ import { Body, Box } from "detect-collisions";
 // you can define the incoming types when the component is created
 export interface IColliderComponent {
   data: {
+    type: string;
     id: string;
     startingPosition: Vector;
     offset: Vector;
     size: Vector;
-    layerMask: boolean[];
-    layer: number;
     map: string;
   };
 }
 export type ColliderType = {
+  isColliding: Vector;
   id: string;
-  layerAssignment: number;
-  layers: boolean[];
   colliderBody: Body | undefined;
   offset: Vector;
   map: string;
@@ -31,9 +29,8 @@ export interface ColliderComponent {
 export class ColliderComp extends Component {
   //setting default value
   public value: ColliderType = {
+    isColliding: new Vector(0, 0),
     id: "",
-    layerAssignment: 0,
-    layers: [],
     colliderBody: undefined,
     offset: new Vector(),
     map: "",
@@ -48,8 +45,7 @@ export class ColliderComp extends Component {
       return;
     }
     this.value.id = data.data.id;
-    this.value.layerAssignment = data.data.layer;
-    this.value.layers = [...data.data.layerMask];
+
     this.value.offset = data.data.offset;
     console.log(data.data.startingPosition, data.data.offset);
 
@@ -58,14 +54,14 @@ export class ColliderComp extends Component {
     console.log(entityposition);
 
     let thisEntity;
-    switch (this.value.layerAssignment) {
-      case 2: //static body
+    switch (data.data.type) {
+      case "static": //static body
         thisEntity = createStaticBody(entityposition, data.data.size, this.value.id, data.data.map);
         break;
-      case 3: //players
+      case "players": //players
         thisEntity = createPlayableBody(entityposition, data.data.size, this.value.id, data.data.map);
         break;
-      case 4: //npc
+      case "npc": //npc
         thisEntity = createNPCBody(entityposition, data.data.size, this.value.id, data.data.map);
         break;
       default: //something else that shouldn't
@@ -93,7 +89,7 @@ function createStaticBody(position: Vector, size: Vector, id: string, map: strin
 }
 
 function createNPCBody(position: Vector, size: Vector, id: string, map: string) {
-  return Object.assign(new Box({ x: position.x, y: position.y }, size.x, size.y, { isStatic: true }), {
+  return Object.assign(new Box({ x: position.x, y: position.y }, size.x, size.y, {}), {
     type: "npc",
     id: id,
     map: map,

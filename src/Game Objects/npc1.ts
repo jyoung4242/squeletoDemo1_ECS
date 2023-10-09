@@ -15,7 +15,7 @@ import { playSFX } from "../Events/sfx";
 import { WalkEvent } from "../Events/walk";
 import { DialogEvent } from "../Events/dialogue";
 import { testConversation } from "../Dialogue/testConversation";
-import { npcChangeMap } from "../Events/npcChangeMap";
+import { npcChangeMap } from "../Events/ChangeMap";
 
 // NPC Constants
 const NPC_WALKSPEED = 1;

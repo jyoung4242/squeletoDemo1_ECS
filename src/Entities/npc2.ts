@@ -2,6 +2,10 @@ import { v4 as uuidv4 } from "uuid";
 import { Entity } from "../../_Squeleto/entity";
 import { Vector } from "../../_Squeleto/Vector";
 import { Assets } from "@peasy-lib/peasy-assets";
+import { WalkEvent } from "../Events/walk";
+import { StandEvent } from "../Events/stand";
+import { LogEvent } from "../Events/log";
+import { WaitEvent } from "../Events/wait";
 
 const npcAnimation = {
   frameRate: 8,
@@ -45,9 +49,11 @@ export class NPCEntity {
       id: id,
       components: {
         position: startingVector,
+        name: "Larry",
         zindex: 0,
         size: { data: [32, 33] },
         opacity: 1,
+        render: true,
         spritesheet: {
           data: [
             { src: Assets.image("shadow").src, offset: { x: 0, y: 0 }, size: { x: 32, y: 32 }, framesize: { x: 32, y: 32 } },
@@ -60,6 +66,23 @@ export class NPCEntity {
             },
           ],
         },
+        behaviors: {
+          currentBehavior: "default",
+          behaviors: {
+            default: [
+              [WalkEvent, ["right", 20, 0.4]],
+              [WalkEvent, ["down", 20, 0.4]],
+              [WalkEvent, ["left", 20, 0.4]],
+              [WalkEvent, ["up", 20, 0.4]],
+            ],
+            standing: [
+              [StandEvent, ["right", 1000]],
+              [StandEvent, ["up", 1000]],
+              [StandEvent, ["left", 1000]],
+              [StandEvent, ["down", 1000]],
+            ],
+          },
+        },
         map: myMap,
         collider: {
           data: {
@@ -67,8 +90,7 @@ export class NPCEntity {
             startingPosition: startingVector,
             size: new Vector(16, 8),
             offset: new Vector(8, 24),
-            layer: 4,
-            layerMask: [true, true, true, true, false],
+            type: "npc",
             map: myMap,
           },
         },
@@ -76,7 +98,3 @@ export class NPCEntity {
     });
   }
 }
-
-/*
-entities must have size, position, opacity, and zindex components as they are baked in properties in-line
-*/
