@@ -49,6 +49,11 @@ export class MovementSystem extends System {
         entity.position = entity.position.add(entity.velocity);
         const cboyPosition = entity.position.add(entity.collider.offset);
         entity.collider.colliderBody?.setPosition(cboyPosition.x, cboyPosition.y);
+        if (entity.collider.interactor?.body)
+          entity.collider.interactor?.body.setPosition(
+            entity.position.x + entity.collider.interactor.offset.x,
+            entity.position.y + entity.collider.interactor.offset.y
+          );
         this.moveSignal.send([entity.id, entity.velocity.magnitude]);
       }
     });

@@ -20,6 +20,7 @@ import { MapComp } from "./entitymap";
 import { EventComp } from "./events";
 import { RenderComp } from "./render";
 import { NameComp } from "./name";
+import { InteractionComp } from "./interactions";
 
 // The template component is demonstrated by default, you'll probably
 // want to replace it
@@ -40,5 +41,6 @@ export function LoadComponents() {
     new EventComp(),
     new RenderComp(),
     new NameComp(),
+    new InteractionComp(),
   ];
 }

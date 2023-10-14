@@ -53,8 +53,16 @@ export class HeroEntity {
         velocity: { data: new Vector(0, 0) },
         keyboard: { data: true },
         render: true,
+        interactions: {
+          data: { isEnabled: false, isActive: false, color: "transparent", radius: 1, blur: 10, conditions: {}, actions: [] },
+        },
         collider: {
           data: {
+            interactor: {
+              radius: 12,
+              offsetX: 4,
+              offsetY: 16,
+            },
             id: id,
             startingPosition: startingVector,
             size: new Vector(16, 8),
@@ -63,6 +71,7 @@ export class HeroEntity {
             map: myMap,
           },
         },
+
         map: myMap,
         spritesheet: {
           data: [

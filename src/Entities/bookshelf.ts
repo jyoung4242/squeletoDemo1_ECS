@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Entity } from "../../_Squeleto/entity";
 import { Vector } from "../../_Squeleto/Vector";
 import { Assets } from "@peasy-lib/peasy-assets";
+import { LogEvent } from "../Events/log";
 
 export class bookshelfEntity {
   static create(startingVector: Vector) {
@@ -10,6 +11,7 @@ export class bookshelfEntity {
     return Entity.create({
       id: id,
       components: {
+        name: "bookshelf",
         position: startingVector,
         zindex: 0,
         render: true,
@@ -17,6 +19,27 @@ export class bookshelfEntity {
         opacity: 1,
         sprites: {
           data: [{ src: Assets.image("bookshelf").src, offset: { x: 0, y: 0 }, size: { x: 32, y: 26 } }],
+        },
+        interactions: {
+          data: {
+            isEnabled: true,
+            isActive: false,
+            color: "transparent",
+            blurradius: 1,
+            w: 30,
+            h: 24,
+            x: 0,
+            y: 0,
+            radius: "1",
+            blur: 3,
+            conditions: {},
+            actions: [
+              {
+                condition: "default",
+                actions: [LogEvent.create("bookshelf", ["Interacting with the bookshelf", "#ffffff"])],
+              },
+            ], //[LogEvent.create("bookshelf", ["Interacting with the bookshelf"])],},
+          },
         },
         map: myMap,
         collider: {

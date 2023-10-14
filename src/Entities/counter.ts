@@ -19,6 +19,9 @@ export class CounterEntity {
           data: [{ src: Assets.image("counter").src, offset: { x: 0, y: 0 }, size: { x: 32, y: 33 } }],
         },
         map: myMap,
+        interactions: {
+          data: { isEnabled: false, isActive: false, color: "transparent", radius: 1, blur: 10, conditions: {}, actions: [] },
+        },
         collider: {
           data: {
             id: id,

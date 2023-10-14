@@ -13,18 +13,18 @@ export class LogEvent extends GameEvent {
   message: string = "";
   color: string = "#FFFFFF";
 
-  constructor(who: Entity | null, params: [...any]) {
+  constructor(who: Entity | string | null, params: [...any]) {
     super(who, params);
     this.event = "LogEvent";
     this.message = params[0];
     this.color = params[1];
   }
 
-  static create(who: Entity | null, params: [...any]): LogEvent {
+  static create(who: Entity | string | null, params: [...any]): LogEvent {
     return new LogEvent(who, params);
   }
 
-  init(): Promise<void> {
+  init(entities: Entity[]): Promise<void> {
     this.eventStatus = "running";
     return new Promise(resolve => {
       let msgTemplate = chalk.hex(this.color);

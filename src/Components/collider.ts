@@ -1,10 +1,11 @@
 import { Vector } from "../../_Squeleto/Vector";
 import { Component } from "../../_Squeleto/component";
-import { Body, Box } from "detect-collisions";
+import { Body, Box, Circle } from "detect-collisions";
 
 // you can define the incoming types when the component is created
 export interface IColliderComponent {
   data: {
+    interactor?: any;
     type: string;
     id: string;
     startingPosition: Vector;
@@ -14,9 +15,13 @@ export interface IColliderComponent {
   };
 }
 export type ColliderType = {
+  interactor?: {
+    body: Body;
+    offset: Vector;
+  };
   isColliding: Vector;
   id: string;
-  colliderBody: Body | undefined;
+  colliderBody: any;
   offset: Vector;
   map: string;
 };
@@ -69,7 +74,25 @@ export class ColliderComp extends Component {
         throw new Error("invalid layer assignement on entity");
     }
     this.value.colliderBody = thisEntity;
+    if (data.data.interactor) {
+      const interactorVector = {
+        x: data.data.startingPosition.x + data.data.interactor.offsetX,
+        y: data.data.startingPosition.y + data.data.interactor.offsetY,
+      };
+
+      this.value.interactor = {
+        body: createInteractor(new Vector(interactorVector.x, interactorVector.y), data.data.interactor.radius),
+        offset: new Vector(data.data.interactor.offsetX, data.data.interactor.offsetY),
+      };
+      console.log(this.value);
+    }
   }
+}
+
+function createInteractor(position: Vector, radius: number) {
+  return Object.assign(new Box({ x: position.x, y: position.y }, radius * 2, radius * 2), {
+    type: "interactor",
+  });
 }
 
 function createPlayableBody(position: Vector, size: Vector, id: string, map: string) {

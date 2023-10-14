@@ -106,7 +106,7 @@ export class Kitchen {
         { event: LogEvent, params: ["executing properly"] },
       ],
     },
-    {
+    /* {
       x: 79,
       y: 152,
       w: 16,
@@ -116,7 +116,7 @@ export class Kitchen {
       mode: "reset",
       actionStatus: "idle",
       actions: [ResetMapEvent.create(null, ["kitchen bottom door", "kitchen"])],
-    },
+    }, */
     {
       x: 79,
       y: 172,

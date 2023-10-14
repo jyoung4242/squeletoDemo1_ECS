@@ -20,11 +20,13 @@ export class KeyboardSystem extends System {
   downDown: boolean = false;
   pauseSignal: Signal;
   isCutscenePlaying: boolean = false;
+  interactSignal: Signal;
   cutsceneSignal: Signal;
 
   template = ``;
   public constructor() {
     super("keyboard");
+    this.interactSignal = new Signal("interact");
     this.pauseSignal = new Signal("pauseEngine");
     this.cutsceneSignal = new Signal("cutscene");
     this.cutsceneSignal.listen((details: CustomEvent) => {
@@ -37,11 +39,15 @@ export class KeyboardSystem extends System {
         ArrowRight: "walk_right",
         ArrowDown: "walk_down",
         ArrowUp: "walk_up",
-        " ": "pause",
+        Escape: "pause",
+        " ": "interact",
       },
       (action: string, doing: boolean) => {
         if (doing && !this.isCutscenePlaying) {
           switch (action) {
+            case "interact":
+              this.interactSignal.send();
+              break;
             case "pause":
               this.pauseSignal.send();
               break;

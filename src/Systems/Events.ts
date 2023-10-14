@@ -28,14 +28,18 @@ export class EventSystem extends System {
   }
 
   runCutscene = (SignalData: CustomEvent) => {
+    console.log("signal received for custom cutscene");
+
     this.cutsceneIndex = 0;
     this.cutsceneSequence = [...SignalData.detail.params[0]];
     this.isCutsceneRunning = true;
+    this.cutSceneSignal.send([true]);
   };
 
   // update routine that is called by the gameloop engine
   update = (deltaTime: number, now: number, entities: EventEntity[]): void => {
-    if (!this.isCutsceneRunning || this.isBehaviorEventActive) {
+    if (!this.isCutsceneRunning) {
+      //|| this.isBehaviorEventActive
       //THIS IS THE BEHAVIOR LOOPS
       entities.forEach(entity => {
         if (!this.processEntity(entity)) return;
@@ -73,11 +77,13 @@ export class EventSystem extends System {
       });
     } else {
       //@ts-ignore
+      console.log("begging of cutscene handler");
+
       if (this.cutsceneCurrentEvent == undefined) {
         //setup current Event
 
         this.cutsceneCurrentEvent = this.cutsceneSequence[this.cutsceneIndex];
-        //console.log("setting event", this.cutsceneCurrentEvent);
+        console.log("setting event", this.cutsceneCurrentEvent);
       }
 
       if (this.cutsceneCurrentEvent == undefined) return;
@@ -95,7 +101,6 @@ export class EventSystem extends System {
       } else if (this.cutsceneCurrentEvent.eventStatus == "complete") {
         //console.log("cutscene complete");
         this.cutsceneCurrentEvent.reset();
-
         this.cutsceneIndex++;
         this.cutsceneCurrentEvent = undefined;
 
@@ -103,7 +108,8 @@ export class EventSystem extends System {
           this.cutsceneIndex = 0;
           this.isCutsceneRunning = false;
           this.cutsceneSequence = [];
-          //console.log("ending cutscene");
+          this.cutSceneSignal.send([false]);
+          console.log("ending cutscene");
         }
         return;
       }
@@ -113,10 +119,10 @@ export class EventSystem extends System {
 
 export class GameEvent {
   eventStatus: "idle" | "running" | "complete";
-  who: Entity | null = null;
+  who: Entity | string | null = null;
   event: string = "event";
 
-  constructor(who: Entity | null, params: [...any]) {
+  constructor(who: Entity | string | null, params: [...any]) {
     this.who = who;
     this.eventStatus = "idle";
   }

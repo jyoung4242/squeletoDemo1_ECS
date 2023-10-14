@@ -54,6 +54,27 @@ export class NPCEntity {
         size: { data: [32, 33] },
         opacity: 1,
         render: true,
+        interactions: {
+          data: {
+            isEnabled: true,
+            isActive: false,
+            color: "transparent",
+            w: 16,
+            h: 8,
+            x: 8,
+            y: 24,
+            blurradius: 3,
+            radius: "50%",
+            blur: 3,
+            conditions: {},
+            actions: [
+              {
+                condition: true,
+                actions: [LogEvent.create("Larry", ["Interacting with Larry!!!", "#007777"])],
+              },
+            ],
+          },
+        },
         spritesheet: {
           data: [
             { src: Assets.image("shadow").src, offset: { x: 0, y: 0 }, size: { x: 32, y: 32 }, framesize: { x: 32, y: 32 } },
@@ -66,6 +87,7 @@ export class NPCEntity {
             },
           ],
         },
+
         behaviors: {
           currentBehavior: "default",
           behaviors: {

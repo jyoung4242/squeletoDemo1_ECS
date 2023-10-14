@@ -12,10 +12,18 @@ import { UI } from "@peasy-lib/peasy-ui";
 import { MapComponent } from "../Components/entitymap";
 import { VelocityComponent } from "../Components/velocity";
 import { over } from "lodash";
+import { InteractionComponent } from "../Components/interactions";
+import { KeyboardComp } from "../Components/keyboard";
 
 // type definition for ensuring the entity template has the correct components
 // ComponentTypes are defined IN the components imported
-export type ColliderEntity = Entity & ColliderComponent & SizeComponent & PositionComponent & MapComponent;
+export type ColliderEntity = Entity &
+  ColliderComponent &
+  SizeComponent &
+  PositionComponent &
+  MapComponent &
+  InteractionComponent &
+  KeyboardComp;
 
 export type colliderBody = Box & { type: string; layerAssignment: number; layers: boolean[]; map: "" };
 
@@ -139,11 +147,13 @@ export class CollisionDetectionSystem extends System {
       if (ent.collider != null) {
         this.dc.insert(ent.collider.colliderBody as Box);
       }
+      if (ent.collider.interactor) this.dc.insert(ent.collider.interactor.body);
     });
   }
 
   // update routine that is called by the gameloop engine
   public update(deltaTime: number, now: number, entities: ColliderEntity[]): void {
+    this.dc.update();
     //debug drawing to canvas
     if (this.ctx && this.cnv && this.debug) {
       this.ctx.clearRect(0, 0, this.cnv?.width, this.cnv?.height);
@@ -153,7 +163,110 @@ export class CollisionDetectionSystem extends System {
       this.ctx.stroke();
     }
 
-    entities.forEach(ent => (ent.collider.isColliding = new Vector(0, 0)));
+    const playerCollider = entities.find(ent => {
+      if (ent.collider.colliderBody) {
+        let type = ent.collider.colliderBody.type;
+        return type == "player";
+      }
+    })?.collider.colliderBody;
+
+    const collisionEntities = this.dc.all();
+    //@ts-ignore
+    const interactor = collisionEntities.find(ent => ent.type == "interactor");
+
+    collisionEntities.forEach(ent => {
+      //@ts-ignore
+      if (ent.type == "player") return;
+
+      //Standard collision Detection
+      //check for entities ( excludes walls and triggers)
+      if (this.dc.checkCollision(playerCollider, ent)) {
+        let { b, overlapN, overlapV } = this.dc.response;
+        if (b.type == "static")
+          collisionResolution(playerCollider, b, entities, overlapV, this.dc.response, collisionResolutionType.static);
+        else if (b.type == "wall")
+          collisionResolution(playerCollider, b, entities, overlapV, this.dc.response, collisionResolutionType.wall);
+        else if (b.type == "trigger")
+          collisionResolution(playerCollider, b, entities, overlapV, this.dc.response, collisionResolutionType.mapevent);
+        else if (b.type == "npc")
+          collisionResolution(playerCollider, b, entities, overlapV, this.dc.response, collisionResolutionType.npc);
+        //collision
+      } else {
+        //no collision
+
+        //@ts-ignore
+        if (ent.type == "trigger") {
+          //@ts-ignore
+          if (ent.actionStatus != "idle") {
+            //reset trigger
+            //@ts-ignore
+            ent.actionStatus = "idle";
+            console.log("resetting trigger");
+          }
+        }
+      }
+
+      //interaction detection
+      //@ts-ignore
+      if (interactor && ent.type != "interactor" && this.dc.checkCollision(interactor, ent)) {
+        const entParent = entities.find(interaction => interaction.collider.colliderBody == ent);
+        let response = this.dc.response;
+        if (!entParent?.interactions) return;
+
+        //direction check, from interactor parent
+        const interactorParent = entities.find(ent => ent.collider.interactor != null);
+        //@ts-ignore
+        let interactorDirection = interactorParent.keyboard.direction;
+        let directionAlignment = false;
+        //compare collision normal to interactorDirection
+
+        switch (interactorDirection) {
+          case "down":
+            directionAlignment = response.overlapN.y == 1;
+            break;
+          case "up":
+            directionAlignment = response.overlapN.y == -1;
+            break;
+          case "left":
+            directionAlignment = response.overlapN.x == -1;
+            break;
+          case "right":
+            directionAlignment = response.overlapN.x == 1;
+            break;
+          default:
+            directionAlignment = false;
+            break;
+        }
+
+        if (entParent.interactions.isEnabled && directionAlignment) {
+          //@ts-ignore
+          //if (entParent.name == "bookshelf") console.log("changing");
+          console.log(directionAlignment);
+
+          entParent.interactions.isActive = true;
+          entParent.interactions.color = "whitesmoke";
+        } else {
+          if (entParent.interactions.isEnabled) {
+            //@ts-ignore
+            //if (entParent.name == "bookshelf") console.log("unchanging");
+            entParent.interactions.isActive = false;
+            entParent.interactions.color = "transparent";
+          }
+        }
+      } else {
+        const entParent = entities.find(interaction => interaction.collider.colliderBody == ent);
+
+        if (!entParent?.interactions) return;
+        if (entParent.interactions.isEnabled) {
+          //@ts-ignore
+          //if (entParent.name == "bookshelf") console.log("unchanging");
+          entParent.interactions.isActive = false;
+          entParent.interactions.color = "transparent";
+        }
+      }
+    });
+
+    /* entities.forEach(ent => (ent.collider.isColliding = new Vector(0, 0)));
     this.dc.checkAll((response: Response) => {
       const { a, b, overlapV } = response;
 
@@ -173,7 +286,12 @@ export class CollisionDetectionSystem extends System {
         collisionResolution(a, b, entities, overlapV, response, collisionResolutionType.npc);
       else if (b.type == "player" && a.type == "npc")
         collisionResolution(b, a, entities, overlapV, response, collisionResolutionType.npc);
-    });
+      else if ((a.type == "interactor" && b.type != "player") || (b.type == "interactor" && a.type != "player")) {
+        if(a.type == 'interactor'){
+          
+        }
+      }
+    }); */
   }
 }
 

@@ -38,6 +38,7 @@ import { RenderSystem } from "../Systems/Rendering";
 import { Signal } from "../../_Squeleto/Signals";
 import { EventSystem } from "../Systems/Events";
 import { StoryFlagSystem } from "../Systems/StoryFlags";
+import { interactionSystem } from "../Systems/Interactions";
 
 // All Squeleto Scenes are an extension of the Scene Class
 export class Game extends Scene {
@@ -145,6 +146,8 @@ export class Game extends Scene {
     const dc = new CollisionDetectionSystem([Kitchen], "kitchen", false);
     dc.loadEntities(this.entities as ColliderEntity[]);
 
+    console.log(this.entities);
+
     this.Systems.push(
       new CameraFollowSystem(),
       dc,
@@ -152,7 +155,8 @@ export class Game extends Scene {
       new KeyboardSystem(),
       new AnimatedSpriteSystem(),
       new RenderSystem("kitchen"),
-      new EventSystem()
+      new EventSystem(),
+      new interactionSystem()
     );
 
     // Turn on BGM
