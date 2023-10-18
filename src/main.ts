@@ -14,9 +14,9 @@ import { Game } from "./Scenes/game";
 import { StoryFlagSystem } from "./Systems/StoryFlags";
 
 // Setting up Viewport with a HUD layer and the Game layer
-const VIEWPORT_WIDTH = 400;
+export const VIEWPORT_WIDTH = 400;
 const ASPECT_RATIO = 16 / 9;
-const VIEWPORT_HEIGHT = VIEWPORT_WIDTH / ASPECT_RATIO;
+export const VIEWPORT_HEIGHT = VIEWPORT_WIDTH / ASPECT_RATIO;
 console.log("vp height: ", VIEWPORT_HEIGHT);
 
 let viewport = Viewport.create({ size: { x: VIEWPORT_WIDTH, y: VIEWPORT_HEIGHT } });

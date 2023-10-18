@@ -22,10 +22,12 @@ export class KeyboardSystem extends System {
   isCutscenePlaying: boolean = false;
   interactSignal: Signal;
   cutsceneSignal: Signal;
+  confirmSignal: Signal;
 
   template = ``;
   public constructor() {
     super("keyboard");
+    this.confirmSignal = new Signal("confirm");
     this.interactSignal = new Signal("interact");
     this.pauseSignal = new Signal("pauseEngine");
     this.cutsceneSignal = new Signal("cutscene");
@@ -40,11 +42,17 @@ export class KeyboardSystem extends System {
         ArrowDown: "walk_down",
         ArrowUp: "walk_up",
         Escape: "pause",
+        Enter: "confirm",
         " ": "interact",
       },
       (action: string, doing: boolean) => {
         if (doing && !this.isCutscenePlaying) {
           switch (action) {
+            case "confirm":
+              console.log("confirm");
+
+              this.confirmSignal.send();
+              break;
             case "interact":
               this.interactSignal.send();
               break;
@@ -102,13 +110,15 @@ export class KeyboardSystem extends System {
 
   // update routine that is called by the gameloop engine
   public update(deltaTime: number, now: number, entities: KeyboardEntity[]): void {
+    //console.log("updating keyboard");
+    Input.update(deltaTime);
     entities.forEach(entity => {
       // This is the screening for skipping entities that aren't impacted by this system
       // if you want to impact ALL entities, you can remove this
       if (!this.processEntity(entity)) {
         return;
       }
-      Input.update(deltaTime);
+
       entity.keyboard.direction = this.direction;
       entity.keyboard.state = this.state;
 

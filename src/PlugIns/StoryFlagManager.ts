@@ -1,4 +1,4 @@
-import { GameEvent } from "./EventManager";
+import { GameEvent } from "../Systems/EventManager";
 //import { GameObject } from "../parkinglog/GameObject";
 
 export class StoryFlagManager {

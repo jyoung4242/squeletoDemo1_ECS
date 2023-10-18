@@ -2,7 +2,7 @@
 import { Scene, SceneManager } from "../../_Squeleto/Scene";
 import { Assets } from "@peasy-lib/peasy-assets";
 import { Engine } from "@peasy-lib/peasy-engine";
-import { StoryFlagManager } from "../Systems/StoryFlagManager";
+import { StoryFlagManager } from "../PlugIns/StoryFlagManager";
 import { Chiptune } from "../Systems/Chiptune";
 import { ParticleSystem } from "../PlugIns/Particles";
 import { State } from "@peasy-lib/peasy-states";
@@ -40,6 +40,9 @@ import { EventSystem } from "../Systems/Events";
 import { StoryFlagSystem } from "../Systems/StoryFlags";
 import { interactionSystem } from "../Systems/Interactions";
 
+import { Dialogue } from "../Systems/dialog";
+import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../main";
+
 // All Squeleto Scenes are an extension of the Scene Class
 export class Game extends Scene {
   pauseSignal: Signal = new Signal("pauseEngine");
@@ -51,19 +54,13 @@ export class Game extends Scene {
   // dm name here is critical for peasy bindings, cause they have to match what's in the plugin
   // when using plugins, be very careful how you access them
   //****************************************** */
-  dm = new DialogManager();
-  psystems = new bookCaseParticleSystem(Assets);
+  //dm = new DialogManager();
+  // psystems = new bookCaseParticleSystem(Assets);
 
   // StoryFlag system uses a default set of conditions that gets passed around
   // If larger, this can be brought in from its own module
   storyFlags = {
-    someCondition: false,
-    metBookcase: false,
-    threat: false,
-    meek: false,
-    deaf: false,
-    angry: false,
-    bathroom: false,
+    bookcaseVisits: false,
   };
   sm = new StoryFlagManager(this.storyFlags);
 
@@ -75,11 +72,6 @@ export class Game extends Scene {
   
   < \${ System === } \${ System <=* Systems }>
   </scene-layer>`;
-
-  /*
-   ${this.dm.template}
-      ${this.psystems.template}
-  */
 
   bgm: Chiptune | undefined | null;
 
@@ -105,6 +97,8 @@ export class Game extends Scene {
       "door.mp3",
       "spark.png",
       "spark.mp3",
+      "npcAvatar.png",
+      "heroAvatar.png",
     ]);
 
     // *************************************
@@ -127,11 +121,19 @@ export class Game extends Scene {
         size: { x: 192, y: 192 },
         position: { x: 192 / 2, y: 192 / 2 },
       },
+      {
+        name: "dialog",
+        size: { x: VIEWPORT_WIDTH, y: VIEWPORT_HEIGHT },
+      },
     ]);
     let layers = SceneManager.viewport.layers;
+
     const game = layers.find(lyr => lyr.name == "game");
     if (game) this.view = UI.create(game.element as HTMLElement, this, this.template);
     if (this.view) await this.view.attached;
+
+    const dialog = layers.find(lyr => lyr.name == "dialog");
+    if (dialog) UI.create(dialog.element, new Dialogue(), Dialogue.template);
 
     // **************************************
     // Load Objects

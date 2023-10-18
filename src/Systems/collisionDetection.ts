@@ -201,7 +201,6 @@ export class CollisionDetectionSystem extends System {
             //reset trigger
             //@ts-ignore
             ent.actionStatus = "idle";
-            console.log("resetting trigger");
           }
         }
       }
@@ -239,16 +238,10 @@ export class CollisionDetectionSystem extends System {
         }
 
         if (entParent.interactions.isEnabled && directionAlignment) {
-          //@ts-ignore
-          //if (entParent.name == "bookshelf") console.log("changing");
-          console.log(directionAlignment);
-
           entParent.interactions.isActive = true;
           entParent.interactions.color = "whitesmoke";
         } else {
           if (entParent.interactions.isEnabled) {
-            //@ts-ignore
-            //if (entParent.name == "bookshelf") console.log("unchanging");
             entParent.interactions.isActive = false;
             entParent.interactions.color = "transparent";
           }
@@ -258,40 +251,11 @@ export class CollisionDetectionSystem extends System {
 
         if (!entParent?.interactions) return;
         if (entParent.interactions.isEnabled) {
-          //@ts-ignore
-          //if (entParent.name == "bookshelf") console.log("unchanging");
           entParent.interactions.isActive = false;
           entParent.interactions.color = "transparent";
         }
       }
     });
-
-    /* entities.forEach(ent => (ent.collider.isColliding = new Vector(0, 0)));
-    this.dc.checkAll((response: Response) => {
-      const { a, b, overlapV } = response;
-
-      if (a.type == "player" && b.type == "static")
-        collisionResolution(a, b, entities, overlapV, response, collisionResolutionType.static);
-      else if (b.type == "player" && a.type == "static")
-        collisionResolution(b, a, entities, overlapV, response, collisionResolutionType.static);
-      else if (a.type == "player" && b.type == "wall")
-        collisionResolution(a, b, entities, overlapV, response, collisionResolutionType.wall);
-      else if (b.type == "player" && a.type == "wall")
-        collisionResolution(b, a, entities, overlapV, response, collisionResolutionType.wall);
-      else if (a.type == "player" && b.type == "trigger")
-        collisionResolution(a, b, entities, overlapV, response, collisionResolutionType.mapevent);
-      else if (b.type == "player" && a.type == "trigger")
-        collisionResolution(b, a, entities, overlapV, response, collisionResolutionType.mapevent);
-      else if (a.type == "player" && b.type == "npc")
-        collisionResolution(a, b, entities, overlapV, response, collisionResolutionType.npc);
-      else if (b.type == "player" && a.type == "npc")
-        collisionResolution(b, a, entities, overlapV, response, collisionResolutionType.npc);
-      else if ((a.type == "interactor" && b.type != "player") || (b.type == "interactor" && a.type != "player")) {
-        if(a.type == 'interactor'){
-          
-        }
-      }
-    }); */
   }
 }
 
@@ -391,10 +355,19 @@ const collisionResolution = (
       if (entityA == undefined || !entityA.collider.colliderBody) return;
 
       if (b.actionStatus == "idle") {
-        console.log(b.mode);
+        b.actionStatus = "active";
+        if (b.actions.length > 0) {
+          for (let action of b.actions) {
+            //console.log(action);
 
-        if (b.mode == "latch") b.actionStatus = "active";
-        if (b.actions.length > 0) eventSignal.send([b.actions]);
+            if (action.condition) {
+              eventSignal.send([action.actions]);
+              return;
+            }
+          }
+        }
+
+        //if (b.actions.length > 0) eventSignal.send([b.actions]);
       }
 
       break;

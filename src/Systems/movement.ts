@@ -14,11 +14,16 @@ import { LogEvent } from "../Events/log";
 export type MovementEntity = Entity & PositionComponent & VelocityComponent & ColliderComponent & KeyboardComponent;
 
 export class MovementSystem extends System {
+  isCutscenePlaying: boolean = false;
+  cutsceneSignal: Signal = new Signal("cutscene");
   moveSignal: Signal;
   template = ``;
   public constructor() {
     super("movement");
     this.moveSignal = new Signal("moved");
+    this.cutsceneSignal.listen((signalData: CustomEvent) => {
+      this.isCutscenePlaying = signalData.detail.params[0];
+    });
   }
 
   public processEntity(entity: MovementEntity): boolean {
@@ -30,6 +35,7 @@ export class MovementSystem extends System {
 
   // update routine that is called by the gameloop engine
   public update(deltaTime: number, now: number, entities: MovementEntity[]): void {
+    if (this.isCutscenePlaying) return;
     entities.forEach(entity => {
       // This is the screening for skipping entities that aren't impacted by this system
       // if you want to impact ALL entities, you can remove this

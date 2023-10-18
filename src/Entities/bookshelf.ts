@@ -3,6 +3,8 @@ import { Entity } from "../../_Squeleto/entity";
 import { Vector } from "../../_Squeleto/Vector";
 import { Assets } from "@peasy-lib/peasy-assets";
 import { LogEvent } from "../Events/log";
+import { DialogEvent } from "../Events/dialogEvent";
+import { StoryFlagEvent } from "../Events/storyflag";
 
 export class bookshelfEntity {
   static create(startingVector: Vector) {
@@ -36,9 +38,12 @@ export class bookshelfEntity {
             actions: [
               {
                 condition: "default",
-                actions: [LogEvent.create("bookshelf", ["Interacting with the bookshelf", "#ffffff"])],
+                actions: [
+                  DialogEvent.create("bookshelf", ["This is a bookshelf, not interesting..."]),
+                  StoryFlagEvent.create("bookcase", ["bookcaseVisits", true]),
+                ],
               },
-            ], //[LogEvent.create("bookshelf", ["Interacting with the bookshelf"])],},
+            ],
           },
         },
         map: myMap,

@@ -48,9 +48,8 @@ export class interactionSystem extends System {
         console.log("in check interaction");
 
         for (let action of actions) {
-          console.log(action);
-
-          if (StoryFlagSystem.readStoryFlagValue(action.condition) || action.condition == "default" || action.condition == true) {
+          //this is the conditional check of
+          if (action.condition) {
             console.log("inside storyflag check");
 
             this.sendEventSignal.send([action.actions]);

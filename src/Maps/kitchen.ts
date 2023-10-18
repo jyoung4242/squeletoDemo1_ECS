@@ -11,6 +11,9 @@ import { ChangeMap } from "../Events/ChangeMap";
 import { ChangeBehaviorEvent } from "../Events/changeBehavior";
 import { NPCEntity } from "../Entities/npc2";
 import { ResetMapEvent } from "../Events/resetMapTrigger";
+import { DialogEvent } from "../Events/dialogEvent";
+import { StoryFlagEvent } from "../Events/storyflag";
+import { StoryFlagSystem } from "../Systems/StoryFlags";
 
 export class Kitchen {
   static name = "kitchen";
@@ -97,26 +100,31 @@ export class Kitchen {
       mode: "latch",
       actionStatus: "idle",
       actions: [
-        { event: LogEvent, params: ["I hit the map trigger"] },
-        { event: WaitEvent, params: [1000] },
-        { event: LogEvent, params: ["now im just seeing"] },
-        { event: WaitEvent, params: [1000] },
-        { event: LogEvent, params: ["if my cutscenes"] },
-        { event: WaitEvent, params: [1000] },
-        { event: LogEvent, params: ["executing properly"] },
+        {
+          condition: true,
+          actions: [
+            DialogEvent.create(null, [
+              {
+                template: "basic",
+                content: "You've entered the bathroom, what do you do?",
+                buttonContent: "NEXT",
+                showButton: true,
+              },
+            ]),
+            DialogEvent.create(null, [
+              {
+                template: "center",
+                content: "What do you do?",
+                options: ["1. Hold your breath", "2. Leave Screaming", "3. Light a match"],
+                callback: (choice: number) => StoryFlagSystem.setStoryFlagValue("bathroom", choice),
+                showbutton: false,
+              },
+            ]),
+          ],
+        },
       ],
     },
-    /* {
-      x: 79,
-      y: 152,
-      w: 16,
-      h: 5,
-      id: "kitchen bottom door reset",
-      color: "yellow",
-      mode: "reset",
-      actionStatus: "idle",
-      actions: [ResetMapEvent.create(null, ["kitchen bottom door", "kitchen"])],
-    }, */
+
     {
       x: 79,
       y: 172,
@@ -126,7 +134,7 @@ export class Kitchen {
       color: "yellow",
       actionStatus: "idle",
       mode: "latch",
-      actions: [ChangeBehaviorEvent.create(null, ["Larry", "standing"])],
+      actions: [{ condition: true, actions: [ChangeBehaviorEvent.create(null, ["Larry", "standing"])] }],
     },
   ];
 }

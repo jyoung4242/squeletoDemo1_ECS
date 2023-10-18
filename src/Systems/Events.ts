@@ -28,10 +28,12 @@ export class EventSystem extends System {
   }
 
   runCutscene = (SignalData: CustomEvent) => {
-    console.log("signal received for custom cutscene");
+    //console.log("signal received for custom cutscene");
 
     this.cutsceneIndex = 0;
     this.cutsceneSequence = [...SignalData.detail.params[0]];
+    //console.log(this.cutsceneSequence);
+
     this.isCutsceneRunning = true;
     this.cutSceneSignal.send([true]);
   };
@@ -41,6 +43,8 @@ export class EventSystem extends System {
     if (!this.isCutsceneRunning) {
       //|| this.isBehaviorEventActive
       //THIS IS THE BEHAVIOR LOOPS
+      //console.log("in BL");
+
       entities.forEach(entity => {
         if (!this.processEntity(entity)) return;
 
@@ -64,6 +68,8 @@ export class EventSystem extends System {
           currentEvent.update();
           return;
         } else if (currentEvent.eventStatus == "complete") {
+          //console.log("in completed event");
+
           currentEvent.reset();
           this.isBehaviorEventActive = false;
 
@@ -77,13 +83,13 @@ export class EventSystem extends System {
       });
     } else {
       //@ts-ignore
-      console.log("begging of cutscene handler");
+      //console.log("beginning of cutscene handler");
 
       if (this.cutsceneCurrentEvent == undefined) {
         //setup current Event
 
         this.cutsceneCurrentEvent = this.cutsceneSequence[this.cutsceneIndex];
-        console.log("setting event", this.cutsceneCurrentEvent);
+        //console.log("setting event", this.cutsceneCurrentEvent);
       }
 
       if (this.cutsceneCurrentEvent == undefined) return;
@@ -109,7 +115,7 @@ export class EventSystem extends System {
           this.isCutsceneRunning = false;
           this.cutsceneSequence = [];
           this.cutSceneSignal.send([false]);
-          console.log("ending cutscene");
+          //console.log("ending cutscene");
         }
         return;
       }

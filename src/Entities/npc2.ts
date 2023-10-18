@@ -6,6 +6,8 @@ import { WalkEvent } from "../Events/walk";
 import { StandEvent } from "../Events/stand";
 import { LogEvent } from "../Events/log";
 import { WaitEvent } from "../Events/wait";
+import { DialogEvent } from "../Events/dialogEvent";
+import { StoryFlagSystem } from "../Systems/StoryFlags";
 
 const npcAnimation = {
   frameRate: 8,
@@ -69,8 +71,15 @@ export class NPCEntity {
             conditions: {},
             actions: [
               {
+                get condition() {
+                  let val = StoryFlagSystem.readStoryFlagValue("bookcaseVisits");
+                  return val;
+                },
+                actions: [DialogEvent.create("NPC", ["Did you find what you're looking for?"])],
+              },
+              {
                 condition: true,
-                actions: [LogEvent.create("Larry", ["Interacting with Larry!!!", "#007777"])],
+                actions: [DialogEvent.create("NPC", ["Go see the bookcase frist"])],
               },
             ],
           },
