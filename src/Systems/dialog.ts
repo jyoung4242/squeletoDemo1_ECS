@@ -169,7 +169,7 @@ export class Dialogue {
     </dialog-inner>
     </dialog-container>
   `;
-
+  confirmSignal: Signal = new Signal("confirm");
   dialogSignal: Signal = new Signal("dialog");
   custsceneSignal: Signal = new Signal("Event");
   endSignal: Signal = new Signal("dialogComplete");
@@ -182,6 +182,7 @@ export class Dialogue {
   isRightVisible = false;
   isContentVisible = true;
   dialogContent = "";
+  shortcut = false;
 
   contentColStart = 3; //3 left, 1 right, 1 center
   contentColEnd = 14; //14 left, 12 right, 14 center
@@ -202,6 +203,9 @@ export class Dialogue {
 
   public constructor() {
     this.dialogSignal.listen(this.startDialog);
+    this.confirmSignal.listen(() => {
+      if (this.shortcut) this.runNext();
+    });
   }
 
   startDialog = (signalData: CustomEvent) => {
@@ -216,8 +220,10 @@ export class Dialogue {
       this.choiceEnd = 13;
       this.isDialogActive = true;
       this.isTransitionActive = false;
+      this.shortcut = true;
     } else if (dialogConfig.template == "left") {
       this.currentID = dialogConfig.id;
+      this.shortcut = dialogConfig.shortcut;
       this.contentColEnd = 14;
       this.contentColStart = 4;
       this.choiceStart = 5;
@@ -227,6 +233,7 @@ export class Dialogue {
       this.isDialogActive = true;
       this.isTransitionActive = false;
     } else if (dialogConfig.template == "right") {
+      this.shortcut = dialogConfig.shortcut;
       this.currentID = dialogConfig.id;
       this.contentColEnd = 12;
       this.contentColStart = 1;
@@ -238,6 +245,7 @@ export class Dialogue {
       this.isDialogActive = true;
       this.isTransitionActive = false;
     } else if (dialogConfig.template == "center") {
+      this.shortcut = dialogConfig.shortcut;
       this.currentID = dialogConfig.id;
       this.contentColEnd = 14;
       this.contentColStart = 1;
@@ -294,6 +302,7 @@ export class Dialogue {
     this.isChoice1Enabled = false;
     this.isChoice2Enabled = false;
     this.isChoice3Enabled = false;
+    this.shortcut = false;
     this.endSignal.send([this.currentID]);
   };
 }

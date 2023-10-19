@@ -46,35 +46,39 @@ export class KeyboardSystem extends System {
         " ": "interact",
       },
       (action: string, doing: boolean) => {
-        if (doing && !this.isCutscenePlaying) {
+        if (doing) {
           switch (action) {
             case "confirm":
-              console.log("confirm");
-
+              if (!this.isCutscenePlaying) return;
               this.confirmSignal.send();
               break;
             case "interact":
+              if (this.isCutscenePlaying) return;
               this.interactSignal.send();
               break;
             case "pause":
               this.pauseSignal.send();
               break;
             case "walk_left":
+              if (this.isCutscenePlaying) return;
               this.direction = "left";
               this.state = "walk";
               this.leftDown = true;
               break;
             case "walk_right":
+              if (this.isCutscenePlaying) return;
               this.direction = "right";
               this.state = "walk";
               this.rightDown = true;
               break;
             case "walk_down":
+              if (this.isCutscenePlaying) return;
               this.direction = "down";
               this.state = "walk";
               this.downDown = true;
               break;
             case "walk_up":
+              if (this.isCutscenePlaying) return;
               this.direction = "up";
               this.state = "walk";
               this.upDown = true;

@@ -24,10 +24,8 @@ export class DialogEvent extends GameEvent {
     this.confirmSignal.listen(this.confirmPressed);
   }
 
-  confirmPressed = () => {
-    //console.log("confirm triggered");
-
-    if (this.eventStatus == "running") {
+  confirmPressed = (id: string) => {
+    if (this.eventStatus == "running" && this.isSimpleDialog) {
       this.eventStatus = "complete";
       if (this.resolution) this.resolution();
     }
@@ -61,6 +59,7 @@ export class DialogEvent extends GameEvent {
           template: "basic",
           content: this.payload,
           showButton: true,
+          shortcut: true,
         };
       } else {
         Object.assign(dialogConfig, this.payload, { id: this.id });

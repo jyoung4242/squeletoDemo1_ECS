@@ -109,11 +109,13 @@ export class Kitchen {
                 content: "You've entered the bathroom, what do you do?",
                 buttonContent: "NEXT",
                 showButton: true,
+                shortcut: true,
               },
             ]),
             DialogEvent.create(null, [
               {
                 template: "center",
+                shortcut: false,
                 content: "What do you do?",
                 options: ["1. Hold your breath", "2. Leave Screaming", "3. Light a match"],
                 callback: (choice: number) => StoryFlagSystem.setStoryFlagValue("bathroom", choice),

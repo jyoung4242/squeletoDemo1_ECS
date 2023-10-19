@@ -23,7 +23,7 @@ export class interactionSystem extends System {
     });
     this.interactTrigger.listen(() => {
       if (!this.checkInteraction) this.checkInteraction = true;
-      console.log("setting check interaction flag");
+      //console.log("setting check interaction flag");
     });
   }
 
@@ -45,12 +45,12 @@ export class interactionSystem extends System {
 
       if (this.checkInteraction && entity.interactions && entity.interactions.isActive) {
         let actions = entity.interactions.actions;
-        console.log("in check interaction");
+        //console.log("in check interaction");
 
         for (let action of actions) {
           //this is the conditional check of
           if (action.condition) {
-            console.log("inside storyflag check");
+            //  console.log("inside storyflag check");
 
             this.sendEventSignal.send([action.actions]);
             return;
