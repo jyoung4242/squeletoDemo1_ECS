@@ -1,36 +1,44 @@
-import { GameEvent } from "../Systems/Events";
-import { Entity } from "../../_Squeleto/entity";
-import { MapComponent } from "../Components/entitymap";
-import { PositionComponent } from "../Components/positionComponent";
+import { Layer } from "@peasy-lib/peasy-viewport";
+import { SceneManager } from "../../_Squeleto/Scene";
+import { Signal } from "../../_Squeleto/Signals";
 import { Vector } from "../../_Squeleto/Vector";
-
-/**
- * This is a event for the asynchronous changing of the maps
- * for npc's, which is different than the default mapchange
- * which changes the rendered map, this allows NPC's to leave
- * one map and move to another, but doesn't touch what's rendered
- */
+import { Entity } from "../../_Squeleto/entity";
+import { GameEvent } from "../Systems/Events";
 
 export class ChangeMap extends GameEvent {
-  /*  who: (Entity & MapComponent & PositionComponent) | undefined;
-  newMap: string;
-  newX: number;
-  newY: number;
+  mapname: string = "";
+  position: Vector = new Vector(0, 0);
+  mapChangeSignal = new Signal("mapchange");
+  resolution: ((value: void | PromiseLike<void>) => void) | undefined;
+  layers: Layer[];
 
-  constructor(who: (Entity & MapComponent & PositionComponent) | undefined, mapname: string, x: number, y: number) {
-    super("MapChange");
-    this.who = who;
-    this.newMap = mapname;
-    this.newX = x;
-    this.newY = y;
+  constructor(who: Entity | string | null, params: [...any]) {
+    super(who, params);
+    this.event = "ChangeMap";
+    this.mapname = params[0];
+    this.position = params[1];
+    this.mapChangeSignal.listen(this.maploaded);
+    this.layers = SceneManager.viewport.layers;
   }
 
-  init(): Promise<void> {
-    return new Promise(resolve => {
-      (this.who as Entity & MapComponent & PositionComponent).map = this.newMap;
-      (this.who as Entity & MapComponent & PositionComponent).position = new Vector(this.newX, this.newY);
+  maploaded = (signalData: CustomEvent) => {
+    this.eventStatus = "complete";
+    if (this.resolution) this.resolution();
+  };
 
-      resolve();
+  static create(who: Entity | string | null, params: [...any]): ChangeMap {
+    return new ChangeMap(who, params);
+  }
+
+  init(entities: Entity[]): Promise<void> {
+    this.eventStatus = "running";
+    return new Promise(resolve => {
+      //change the map here
+
+      //replace images in viewport layers
+      //replace walls in collision system
+
+      this.resolution = resolve;
     });
-  } */
+  }
 }

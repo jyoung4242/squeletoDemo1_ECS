@@ -15,11 +15,12 @@ import * as music from "./chiptune/theory.js";
 import * as Generators from "./chiptune/generators.js";
 import { scales } from "./chiptune/theory.js";
 import { choose, fill, rndInt, rnd, seedRNG } from "./chiptune/utils.js";
+import * as ChipTuneTypes from "./chiptune/model.js";
 
 interface State {
-  key: Key;
-  scale: Scale;
-  progression: Progression;
+  key: ChipTuneTypes.Key;
+  scale: ChipTuneTypes.Scale;
+  progression: ChipTuneTypes.Progression;
   bpm: number;
   songIndex: number;
   seedCode: string;
@@ -40,8 +41,8 @@ const progressions = [
 ];
 
 type Synth<T> = { play: (note: T) => void };
-type FourChannelsPlusDrums = [Note, Note, Note, Note, Drum];
-type PatternsType<T> = { [K in keyof T]: Pattern<T[K]> };
+type FourChannelsPlusDrums = [ChipTuneTypes.Note, ChipTuneTypes.Note, ChipTuneTypes.Note, ChipTuneTypes.Note, ChipTuneTypes.Drum];
+type PatternsType<T> = { [K in keyof T]: ChipTuneTypes.Pattern<T[K]> };
 type SynthsType<T> = { [K in keyof T]: Synth<T[K]> };
 type SaveCode = string & { typeTag: "__SaveCode" };
 
@@ -70,6 +71,7 @@ export class Chiptune {
       this.au.SquareSynth(0.5),
       this.au.DrumSynth(),
     ];
+
     // create initial patterns
     this.newPatterns();
     this.clock.set(this.state.bpm, this.frame);
@@ -81,7 +83,7 @@ export class Chiptune {
     } else {
       seedRNG(seedOrSave && seedOrSave.length > 0 ? seedOrSave : "" + Math.random());
       return {
-        key: rndInt(12) as Key,
+        key: rndInt(12) as ChipTuneTypes.Key,
         scale: music.scales.minor,
         progression: progressions[0],
         bpm: 112,
@@ -103,7 +105,7 @@ export class Chiptune {
   }
   restore(code: SaveCode): State {
     const codeString = code.slice(2);
-    const key = this.unhex(codeString.slice(0, 2)) as Key;
+    const key = this.unhex(codeString.slice(0, 2)) as ChipTuneTypes.Key;
     const scale = this.unhex(codeString.slice(2, 4)) === 0 ? music.scales.major : music.scales.minor;
     const progression = progressions[this.unhex(codeString.slice(4, 6))];
     const bpm = this.unhex(codeString.slice(6, 8));
@@ -143,6 +145,16 @@ export class Chiptune {
     ];
   }
 
+  attenuate = (value: number) => {
+    let gain;
+    if (value >= 0.1) gain = 0.1;
+    else if (value < 0) gain = 0;
+    else gain = value;
+    console.log("setting gain: ", gain);
+
+    this.au.setGain(gain);
+  };
+
   frame = (f: number) => {
     const positionInPattern = f % PatternSize;
     if (f % 128 === 0 && f !== 0) {
@@ -160,10 +172,6 @@ export class Chiptune {
     this.synths[2].play(this.patterns[2][positionInPattern]);
     this.synths[3].play(this.patterns[3][positionInPattern]);
     this.synths[4].play(this.patterns[4][positionInPattern]);
-  };
-
-  mute = () => {
-    this.ctx.close();
   };
 
   mutateState = () => {

@@ -162,7 +162,8 @@ export class Game extends Scene {
     );
 
     // Turn on BGM
-    //this.bgm = new Chiptune("0x090100700135583f70");
+    this.bgm = new Chiptune("0x090100700135583f70");
+    this.bgm.attenuate(0.05); //.1 is max, 0 is mute
 
     StoryFlagSystem.setStoryFlagValue("startOfGame", true);
 

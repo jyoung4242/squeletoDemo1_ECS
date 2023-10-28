@@ -17,10 +17,7 @@ import { StoryFlagSystem } from "./Systems/StoryFlags";
 export const VIEWPORT_WIDTH = 400;
 const ASPECT_RATIO = 16 / 9;
 export const VIEWPORT_HEIGHT = VIEWPORT_WIDTH / ASPECT_RATIO;
-console.log("vp height: ", VIEWPORT_HEIGHT);
-
-let viewport = Viewport.create({ size: { x: VIEWPORT_WIDTH, y: VIEWPORT_HEIGHT } });
-SceneManager.viewport = viewport;
+SceneManager.viewport = Viewport.create({ size: { x: VIEWPORT_WIDTH, y: VIEWPORT_HEIGHT } });
 
 // Components
 LoadComponents();

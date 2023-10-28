@@ -3,24 +3,25 @@
   This work is licensed under a Creative Commons Attribution 4.0 International License
   https://creativecommons.org/licenses/by/4.0/
 */
-type Note = {
-    note: number | "---" | 'cont',
-    fx?: {
-        pulseWidth?: number,
-        glide?: number
-    },
-    vel?: number
-}
-type Drum = {
-    drum: "---" | 'KCK' | 'NSS' | 'SNR'
-    vel?: number
-}
 
-type Slot = Note | Drum
+export type Note = {
+  note: number | "---" | "cont";
+  fx?: {
+    pulseWidth?: number;
+    glide?: number;
+  };
+  vel?: number;
+};
+export type Drum = {
+  drum: "---" | "KCK" | "NSS" | "SNR";
+  vel?: number;
+};
 
-type Pattern<T> = T[];
+export type Slot = Note | Drum;
 
-type Key = number & {"keyType": true}
+export type Pattern<T> = T[];
 
-type Progression = number[];
-type Scale = number[];
+export type Key = number & { keyType: true };
+
+export type Progression = number[];
+export type Scale = number[];
