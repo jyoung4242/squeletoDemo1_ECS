@@ -38,5 +38,3 @@ export class Entity {
     return entity;
   }
 }
-
-//transition: transform 0.1s;
