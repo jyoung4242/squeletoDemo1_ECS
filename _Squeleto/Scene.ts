@@ -21,7 +21,6 @@ export class Scene extends State {
   public leave() {
     this.view?.destroy();
     SceneManager.viewport.removeLayers();
-    console.log(SceneManager.viewport);
   }
 
   public initialize() {}

@@ -21,6 +21,8 @@ import { HeroEntity } from "../Entities/hero";
 import { bookshelfEntity } from "../Entities/bookshelf";
 import { CounterEntity } from "../Entities/counter";
 import { NPCEntity } from "../Entities/npc2";
+import { PlanterEntity } from "../Entities/planter";
+import { PizzaSignEntity } from "../Entities/pizzasign";
 
 // Finally Import your systems
 import { CameraFollowSystem } from "../Systems/CameraFollow";
@@ -33,21 +35,19 @@ import { EventSystem } from "../Systems/Events";
 import { StoryFlagSystem } from "../Systems/StoryFlags";
 import { interactionSystem } from "../Systems/Interactions";
 import { Dialogue } from "../Systems/dialog";
-import { PlanterEntity } from "../Entities/planter";
-import { PizzaSignEntity } from "../Entities/pizzasign";
 
 // All Squeleto Scenes are an extension of the Scene Class
 export class Game extends Scene {
-  pauseSignal: Signal = new Signal("pauseEngine");
   name: string = "Game";
+
+  // **************************************
+  // Loading Signals
+  // **************************************
+  pauseSignal: Signal = new Signal("pauseEngine");
+
   entities: Entity[] = [];
-  renderedEntities: Entity[] = [];
   Systems: System[] = [];
 
-  /****************************************************
-   * plug-ins are inserted after the renderer to ensure
-   * they render on top of the game
-   ****************************************************/
   public template = `
   <scene-layer class="scene" style="width: 100%; height: 100%; position: relative; top: 0; left:0; color: white;">
     < \${ System === } \${ System <=* Systems }>
@@ -56,14 +56,15 @@ export class Game extends Scene {
   bgm: Chiptune | undefined | null;
 
   public async enter(previous: State | null, ...params: any[]): Promise<void> {
-    //Loading Audio
+    // **************************************
+    // Loading Audio
+    // **************************************
     Audio.initialize({ listener: { position: { x: SceneManager.viewport.half.x, y: SceneManager.viewport.half.y } } });
 
     // **************************************
     // Loading Assets
     // **************************************
     Assets.initialize({ src: "../src/Assets/" });
-
     await Assets.load([
       "lower.png",
       "DemoUpper.png",
@@ -89,6 +90,7 @@ export class Game extends Scene {
 
     // *************************************
     // Setup Viewport Layers
+    // this uses the peasy-ui UI.create() method
     // *************************************
 
     SceneManager.viewport.addLayers([
@@ -133,9 +135,15 @@ export class Game extends Scene {
     this.entities.push(PlanterEntity.create(new Vector(112, 128)));
     this.entities.push(PizzaSignEntity.create(new Vector(144, 156)));
 
+    // **************************************
+    // setup collision system defaults
+    // **************************************
     const dc = new CollisionDetectionSystem([Kitchen, OutsideMap], "kitchen", false);
     dc.loadEntities(this.entities as ColliderEntity[]);
 
+    // **************************************
+    // Load Systems into systems array
+    // **************************************
     this.Systems.push(
       new CameraFollowSystem(),
       dc,
@@ -147,10 +155,15 @@ export class Game extends Scene {
       new interactionSystem()
     );
 
-    // Turn on BGM
-    //this.bgm = new Chiptune("0x090100700135583f70");
-    //this.bgm.attenuate(0.001); //.1 is max, 0 is mute
+    // **************************************
+    // Load BGM
+    // **************************************
+    this.bgm = new Chiptune("0x090100700135583f70");
+    this.bgm.attenuate(0.002); //.1 is max, 0 is mute
 
+    // ***********************************************************
+    // Define initial storyflags for quests and event conditions
+    // ***********************************************************
     StoryFlagSystem.setStoryFlagValue("startOfGame", true);
 
     // **************************************

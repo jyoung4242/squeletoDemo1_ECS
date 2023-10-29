@@ -70,7 +70,7 @@ export class CollisionDetectionSystem extends System {
       this.ctx = (this.cnv as HTMLCanvasElement).getContext("2d");
     });
 
-    console.log("map data", this.mapdata);
+    //console.log("map data", this.mapdata);
   }
 
   mapchange = (signalData: any) => {
@@ -130,7 +130,7 @@ export class CollisionDetectionSystem extends System {
         );
       }
     );
-    console.log(this.dc.all());
+    //console.log(this.dc.all());
   };
 
   createWallBody(position: Vector, size: Vector, map: string): any {
@@ -162,7 +162,7 @@ export class CollisionDetectionSystem extends System {
       if (ent.collider != null) {
         //console.log(ent.map, this.currentMap);
         if (ent.map == this.currentMap) {
-          console.log("in entity insert:", ent, this.currentMap);
+          //console.log("in entity insert:", ent, this.currentMap);
           this.dc.insert(ent.collider.colliderBody as Box);
         }
       }
@@ -175,7 +175,6 @@ export class CollisionDetectionSystem extends System {
   public update(deltaTime: number, now: number, entities: ColliderEntity[]): void {
     this.dc.update();
     this.entities = entities;
-    console.log(this.dc.all());
 
     //debug drawing to canvas
     if (this.ctx && this.cnv && this.debug) {

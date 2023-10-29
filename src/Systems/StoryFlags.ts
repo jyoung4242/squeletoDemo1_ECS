@@ -10,7 +10,7 @@ export class StoryFlagSystem {
   }
 
   static setStoryFlagValue(label: string, value: any) {
-    console.log(label, value);
+    //console.log(label, value);
 
     this.storyflags[label] = value;
   }

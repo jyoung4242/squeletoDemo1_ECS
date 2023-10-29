@@ -52,11 +52,11 @@ export class ColliderComp extends Component {
     this.value.id = data.data.id;
 
     this.value.offset = data.data.offset;
-    console.log(data.data.startingPosition, data.data.offset);
+    //console.log(data.data.startingPosition, data.data.offset);
 
     const entityposition = data.data.startingPosition.add(data.data.offset);
 
-    console.log(entityposition);
+    //console.log(entityposition);
 
     let thisEntity;
     switch (data.data.type) {
@@ -84,7 +84,7 @@ export class ColliderComp extends Component {
         body: createInteractor(new Vector(interactorVector.x, interactorVector.y), data.data.interactor.radius),
         offset: new Vector(data.data.interactor.offsetX, data.data.interactor.offsetY),
       };
-      console.log(this.value);
+      //console.log(this.value);
     }
   }
 }

@@ -40,7 +40,7 @@ export class bookshelfEntity {
               {
                 condition: "default",
                 actions: [
-                  PlaySoundEvent.create("bookshelf", ["charge", 1, false]),
+                  PlaySoundEvent.create("bookshelf", ["charge", 3, false]),
                   DialogEvent.create("bookshelf", ["This is a bookshelf, not interesting..."]),
                   StoryFlagEvent.create("bookcase", ["bookcaseVisits", true]),
                 ],
