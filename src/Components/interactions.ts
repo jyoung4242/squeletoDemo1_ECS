@@ -1,3 +1,40 @@
+/*****************************************************************************
+ * Component: interactions
+ * Parameters on entity:
+ interactions: {
+          data: {
+            isEnabled: true,    --> enables the interaction
+            isActive: false,    --> flag that changes based on collision with interactor
+            color: "transparent",  -->  the color of the halo on the object, 'transparent' is default
+            w: 16, --> size and position values for the halo
+            h: 8,
+            x: 8,
+            y: 24,
+            blurradius: 3,  -->css properties for the shadowbox
+            radius: "50%",
+            blur: 3,
+            conditions: {},
+            actions: [  ---> list of actions and conditions to fire off if 'interacted' with 
+              {
+                get condition() {
+                  let val = StoryFlagSystem.readStoryFlagValue("bookcaseVisits");
+                  return val;
+                },
+                actions: [DialogEvent.create("NPC", ["Did you find what you're looking for?"])],
+              },
+              {
+                condition: true,  --> last item should be default or true
+                actions: [DialogEvent.create("NPC", ["Go see the bookcase frist"])],
+              },
+            ],
+          },
+        },
+ *
+ * Description:
+ * based on the parameters set on entity create method
+ * adds the details for the interactable halo, and the list of actions that can happen
+ ***************************************************************************** */
+
 import { Component } from "../../_Squeleto/component";
 import { GameEvent } from "../Systems/Events";
 

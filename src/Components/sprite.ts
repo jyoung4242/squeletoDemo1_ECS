@@ -1,3 +1,15 @@
+/*****************************************************************************
+ * Component: sprite
+ * Parameters on entity:
+ *  sprites: {
+          data: [{ src: Assets.image(<'image name'>).src, offset: { x: 0, y: 0 }, size: { x: 32, y: 32 } }],
+        },
+ *
+ * Description:
+ * based on the parameters set on entity create method
+ * this property renders a sprite-object layer onto the entity for a static image
+ ***************************************************************************** */
+
 import { Vector } from "@peasy-lib/peasy-viewport";
 import { Component } from "../../_Squeleto/component";
 

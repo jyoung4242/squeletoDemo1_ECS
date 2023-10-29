@@ -1,9 +1,27 @@
+/*****************************************************************************
+ * Event: Walk
+ * Components Required: VelocityComponent,SpriteSheetComponent,PositionComponent
+ *
+ * Signals: none
+ *
+ * Parameters:
+ * [0]- <string> - this.direction - string designating which direction to walk
+ * [1]- <number> - this.distance - number that dictates how far to walk (pixels)
+ * [2]- <number> - this.speed - number that dictates how FAST to walk
+ *
+ * Description:
+ * based on the parameters passed on the creation of Event, allows the entity to
+ * move until it hits its 'target' position, which is based on direction and distance
+ * this way if collisions block a movement, this doesn't resolve until destination reached
+ ******************************************************************************/
+
 import { GameEvent } from "../Systems/Events";
 import { Entity } from "../../_Squeleto/entity";
 import { Vector } from "../../_Squeleto/Vector";
 import { VelocityComponent } from "../Components/velocity";
 import { SpriteSheetComponent } from "../Components/spritesheet";
 import { PositionComponent } from "../Components/positionComponent";
+
 export type direction = "right" | "left" | "up" | "down";
 
 export class WalkEvent extends GameEvent {

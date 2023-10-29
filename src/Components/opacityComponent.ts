@@ -1,3 +1,12 @@
+/*****************************************************************************
+ * Component: opacity
+ * Parameters on entity:
+ *  opacity: <opacity value 0-1>,
+ *
+ * Description:
+ * based on the parameters set on entity create method
+ * let's you control opacity value for that entity
+ ***************************************************************************** */
 import { Component } from "../../_Squeleto/component";
 
 // you can define the incoming types when the component is created

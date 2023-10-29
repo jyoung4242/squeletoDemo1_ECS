@@ -1,3 +1,50 @@
+/*****************************************************************************
+ * Component: spritesheet
+ * Parameters on entity:
+ *  spritesheet: {
+          data: [
+            {
+              src: Assets.image("shadow").src,
+              offset: { x: 0, y: 0 },
+              size: { x: 32, y: 32 },
+              framesize: { x: 32, y: 32 },
+            },
+            {
+              src: Assets.image("hero").src,
+              offset: { x: 0, y: 0 },
+              size: { x: 128, y: 128 },
+              framesize: { x: 32, y: 32 },
+              animation: heroAnimation,
+            },
+          ],
+        },
+ *
+ * Description:
+ * based on the parameters set on entity create method
+ * let's the spritesheet property get attached to entity, which controls # of sprites
+ * the order they're rendered
+ * and attaches an animation sequence to any/all layers
+ * 
+ * example animation sequence: (coordinates are pixel positions of frame)
+ * const heroAnimation = {
+  frameRate: 8, --> how fast animation runs
+  default: "idle-down",   --> default sequence to run on startup
+  sequences: {  -->lookup list of different animation sequences in spritesheet
+    "idle-right": [[0, 32]],
+    "idle-left": [[0, 96]],
+    "idle-up": [[0, 64]],
+    "idle-down": [[0, 0]],
+    "walk-right": [
+      [0, 32],
+      [32, 32],
+      [64, 32],
+      [96, 32],
+    ],
+    ...
+  },
+};
+ ***************************************************************************** */
+
 import { Vector } from "../../_Squeleto/Vector";
 import { Component } from "../../_Squeleto/component";
 

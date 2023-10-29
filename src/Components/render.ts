@@ -1,3 +1,13 @@
+/*****************************************************************************
+ * Component: render
+ * Parameters on entity:
+ *  render: <true/false> ,
+ *
+ * Description:
+ * based on the parameters set on entity create method
+ * adds render property to entity, allows it to be y-sorted
+ ***************************************************************************** */
+
 import { Component } from "../../_Squeleto/component";
 
 // you can define the incoming types when the component is created

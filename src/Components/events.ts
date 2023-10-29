@@ -1,3 +1,23 @@
+/*****************************************************************************
+ * Component: events
+ * Parameters on entity:
+ *  behaviors: {
+          currentBehavior: "default",
+          behaviors: {
+            default: [
+              <LIST OF EVENTS>
+            ],
+            <'eventname'>: [
+              <LIST OF EVENTS>
+            ],
+            ... other loop sequences
+          },
+ *
+ * Description:
+ * based on the parameters set on entity create method
+ * creates the behavior loops for each entity
+ ***************************************************************************** */
+
 import { Component } from "../../_Squeleto/component";
 import { GameEvent } from "../Systems/Events";
 

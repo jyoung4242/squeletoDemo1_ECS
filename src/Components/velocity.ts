@@ -1,3 +1,14 @@
+/*****************************************************************************
+ * Component: velocity
+ * Parameters on entity:
+ *  velocity: <Vector> ,
+ *
+ * Description:
+ * based on the parameters set on entity create method
+ * this Vector controls the overall velocity of the entity, creates an x/y value as a vector
+ * for velocity, and this is used in movement system
+ ***************************************************************************** */
+
 import { Vector } from "../../_Squeleto/Vector";
 import { Component } from "../../_Squeleto/component";
 

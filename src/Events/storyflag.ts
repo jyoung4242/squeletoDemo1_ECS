@@ -1,3 +1,17 @@
+/*****************************************************************************
+ * Event: StoryFlag
+ * Components Required:none
+ * Signals: none
+ *
+ * Parameters:
+ * [0]- <string> - this.flagname - string designating which storyFlag to modify
+ * [1]- <any> - this.value - any value to set the StoryFlag to
+ *
+ * Description:
+ * based on the parameters passed on the creation of Event, allows the event to
+ * modify the global storyflag value passed
+ ******************************************************************************/
+
 import { Entity } from "../../_Squeleto/entity";
 import { GameEvent } from "../Systems/Events";
 import { StoryFlagSystem } from "../Systems/StoryFlags";

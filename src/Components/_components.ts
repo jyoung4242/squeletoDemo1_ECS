@@ -21,7 +21,6 @@ import { EventComp } from "./events";
 import { RenderComp } from "./render";
 import { NameComp } from "./name";
 import { InteractionComp } from "./interactions";
-import { ActionComp } from "./actions";
 
 // The template component is demonstrated by default, you'll probably
 // want to replace it
@@ -43,6 +42,5 @@ export function LoadComponents() {
     new RenderComp(),
     new NameComp(),
     new InteractionComp(),
-    new ActionComp(),
   ];
 }

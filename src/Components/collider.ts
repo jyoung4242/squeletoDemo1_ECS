@@ -1,6 +1,29 @@
+/*****************************************************************************
+ * Component: collider
+ * Parameters on entity:
+ *  collider: {
+          data: {
+            interactor: {
+              radius: 12,  --> value representing the interactor property, leave off if not wanted
+              offsetX: 4,  -->offset parames for interactor
+              offsetY: 16,
+            },
+            id: id, --> the UUID for the entity for collision traceability
+            startingPosition: startingVector,  --> Vector for where collider is
+            size: new Vector(16, 8), --> size of collider
+            offset: new Vector(8, 24), --> offset from startingVector
+            type: "players", --> string designator for grouping and collision management
+            map: myMap, --> map that entity is currently on
+          },
+ *
+ * Description:
+ * based on the parameters set on entity create method
+ * add a collider Body from detect collisions library to the entity
+ ***************************************************************************** */
+
 import { Vector } from "../../_Squeleto/Vector";
 import { Component } from "../../_Squeleto/component";
-import { Body, Box, Circle } from "detect-collisions";
+import { Body, Box } from "detect-collisions";
 
 // you can define the incoming types when the component is created
 export interface IColliderComponent {
@@ -50,13 +73,8 @@ export class ColliderComp extends Component {
       return;
     }
     this.value.id = data.data.id;
-
     this.value.offset = data.data.offset;
-    //console.log(data.data.startingPosition, data.data.offset);
-
     const entityposition = data.data.startingPosition.add(data.data.offset);
-
-    //console.log(entityposition);
 
     let thisEntity;
     switch (data.data.type) {
@@ -74,6 +92,8 @@ export class ColliderComp extends Component {
         throw new Error("invalid layer assignement on entity");
     }
     this.value.colliderBody = thisEntity;
+
+    //if interactor data exists
     if (data.data.interactor) {
       const interactorVector = {
         x: data.data.startingPosition.x + data.data.interactor.offsetX,
@@ -84,7 +104,6 @@ export class ColliderComp extends Component {
         body: createInteractor(new Vector(interactorVector.x, interactorVector.y), data.data.interactor.radius),
         offset: new Vector(data.data.interactor.offsetX, data.data.interactor.offsetY),
       };
-      //console.log(this.value);
     }
   }
 }

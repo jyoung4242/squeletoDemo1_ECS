@@ -1,3 +1,13 @@
+/*****************************************************************************
+ * Component: position
+ * Parameters on entity:
+ *  position: <Vector> ,
+ *
+ * Description:
+ * based on the parameters set on entity create method
+ * this Vector controls the overall position of the entity, creates an x/y value
+ ***************************************************************************** */
+
 import { Component } from "../../_Squeleto/component";
 import { Vector } from "../../_Squeleto/Vector";
 

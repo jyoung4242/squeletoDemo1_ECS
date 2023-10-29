@@ -1,3 +1,13 @@
+/*****************************************************************************
+ * Component: zindex
+ * Parameters on entity:
+ *  zindex: <zindex number>,
+ *
+ * Description:
+ * based on the parameters set on entity create method
+ * let's you attach and control z-index order of an entity, useful for y-sorting
+ ***************************************************************************** */
+
 import { Component } from "../../_Squeleto/component";
 
 // you can define the incoming types when the component is created

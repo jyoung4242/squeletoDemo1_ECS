@@ -1,3 +1,12 @@
+/*****************************************************************************
+ * Component: name
+ * Parameters on entity:
+ *  name: <'enity name'>,
+ *
+ * Description:
+ * based on the parameters set on entity create method
+ * a name property to the entity, useful if you have to find enitty in array
+ ***************************************************************************** */
 import { Component } from "../../_Squeleto/component";
 
 // you can define the incoming types when the component is created

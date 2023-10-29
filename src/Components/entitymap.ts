@@ -1,3 +1,13 @@
+/*****************************************************************************
+ * Component: entitymap
+ * Parameters on entity:
+ *  camerafollow: { data: <'mapname'> },
+ *
+ * Description:
+ * based on the parameters set on entity create method
+ * the string mapname to the entity for which the entity exists on
+ ***************************************************************************** */
+
 import { Component } from "../../_Squeleto/component";
 
 // you can define the incoming types when the component is created

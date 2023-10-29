@@ -1,3 +1,12 @@
+/*****************************************************************************
+ * Component: size
+ * Parameters on entity:
+ *  size: <Vector> ,
+ *
+ * Description:
+ * based on the parameters set on entity create method
+ * this Vector controls the overall size of the enity, has an x/y value, for width/height
+ ***************************************************************************** */
 import { Vector } from "../../_Squeleto/Vector";
 import { Component } from "../../_Squeleto/component";
 

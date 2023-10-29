@@ -1,3 +1,20 @@
+/*****************************************************************************
+ * Event: DialogEvent
+ * Components Required: none
+ *
+ * Signals: endSignal,startSignal,confirmSignal
+ *
+ * Parameters:
+ * [0]- <object> or <string> - if this is string this triggers 'simple' mode
+ * and if configuration object, it goes to custom mode
+ *
+ * Description:
+ * based on the parameters passed on the creation of Event, allows the UI for the
+ * dialog system to be rendered.  this routine sets up the Dialog configuration
+ * and passes it to the dialog system via Signal
+ * when the endDialog signal is received, cleans up the event
+ ******************************************************************************/
+
 import { Signal } from "../../_Squeleto/Signals";
 import { Entity } from "../../_Squeleto/entity";
 import { GameEvent } from "../Systems/Events";
@@ -32,7 +49,6 @@ export class DialogEvent extends GameEvent {
   };
 
   endDialog = (signalData: CustomEvent) => {
-    //console.log("got end signal");
     const signalID = signalData.detail.params[0];
     if (this.id == signalID) {
       this.eventStatus = "complete";
@@ -50,7 +66,6 @@ export class DialogEvent extends GameEvent {
     return new Promise(resolve => {
       //do something
       let dialogConfig = {};
-      console.log(this.isSimpleDialog);
 
       if (this.isSimpleDialog) {
         dialogConfig = {

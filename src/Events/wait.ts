@@ -22,8 +22,6 @@ export class WaitEvent extends GameEvent {
   public init(): Promise<void> {
     this.eventStatus = "running";
     return new Promise(resolve => {
-      //console.log("waiting...", this.duration);
-
       setTimeout(() => {
         this.eventStatus = "complete";
         resolve();
