@@ -13,6 +13,10 @@
 
 export class OutsideMap {
   static name = "outside";
+  static upper = "outsideUpper";
+  static lower = "outsidemod";
+  static width = 256;
+  static height = 288;
   static walls = [
     {
       x: 20,

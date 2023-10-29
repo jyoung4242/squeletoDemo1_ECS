@@ -5,6 +5,7 @@ import { Assets } from "@peasy-lib/peasy-assets";
 import { LogEvent } from "../Events/log";
 import { DialogEvent } from "../Events/dialogEvent";
 import { StoryFlagEvent } from "../Events/storyflag";
+import { PlaySoundEvent } from "../Events/playSound";
 
 export class bookshelfEntity {
   static create(startingVector: Vector) {
@@ -39,6 +40,7 @@ export class bookshelfEntity {
               {
                 condition: "default",
                 actions: [
+                  PlaySoundEvent.create("bookshelf", ["charge", 1, false]),
                   DialogEvent.create("bookshelf", ["This is a bookshelf, not interesting..."]),
                   StoryFlagEvent.create("bookcase", ["bookcaseVisits", true]),
                 ],

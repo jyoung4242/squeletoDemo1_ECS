@@ -4,19 +4,17 @@
 // * 2 significant parameters in map data is
 // * walls[] and triggers []
 //**************************************
-
-import { LogEvent } from "../Events/log";
-import { WaitEvent } from "../Events/wait";
+import { Vector } from "../../_Squeleto/Vector";
 import { ChangeMap } from "../Events/ChangeMap";
-import { ChangeBehaviorEvent } from "../Events/changeBehavior";
-import { NPCEntity } from "../Entities/npc2";
-import { ResetMapEvent } from "../Events/resetMapTrigger";
 import { DialogEvent } from "../Events/dialogEvent";
-import { StoryFlagEvent } from "../Events/storyflag";
 import { StoryFlagSystem } from "../Systems/StoryFlags";
 
 export class Kitchen {
   static name = "kitchen";
+  static upper = "DemoUpper";
+  static lower = "lower";
+  static width = 192;
+  static height = 192;
   static walls = [
     {
       x: 10,
@@ -136,7 +134,7 @@ export class Kitchen {
       color: "yellow",
       actionStatus: "idle",
       mode: "latch",
-      actions: [{ condition: true, actions: [ChangeBehaviorEvent.create(null, ["Larry", "standing"])] }],
+      actions: [{ condition: true, actions: [ChangeMap.create("hero", ["outside", new Vector(105, 75)])] }],
     },
   ];
 }

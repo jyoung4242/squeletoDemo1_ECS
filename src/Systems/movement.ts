@@ -16,11 +16,11 @@ export type MovementEntity = Entity & PositionComponent & VelocityComponent & Co
 export class MovementSystem extends System {
   isCutscenePlaying: boolean = false;
   cutsceneSignal: Signal = new Signal("cutscene");
-  moveSignal: Signal;
+  //moveSignal: Signal;
   template = ``;
   public constructor() {
     super("movement");
-    this.moveSignal = new Signal("moved");
+    //this.moveSignal = new Signal("moved");
     this.cutsceneSignal.listen((signalData: CustomEvent) => {
       this.isCutscenePlaying = signalData.detail.params[0];
     });
@@ -51,6 +51,7 @@ export class MovementSystem extends System {
       } else {
         adjustedVelocity = entity.velocity;
       }
+
       if (!adjustedVelocity.zero) {
         entity.position = entity.position.add(entity.velocity);
         const cboyPosition = entity.position.add(entity.collider.offset);
@@ -60,7 +61,7 @@ export class MovementSystem extends System {
             entity.position.x + entity.collider.interactor.offset.x,
             entity.position.y + entity.collider.interactor.offset.y
           );
-        this.moveSignal.send([entity.id, entity.velocity.magnitude]);
+        //this.moveSignal.send([entity.id, entity.velocity.magnitude]);
       }
     });
   }

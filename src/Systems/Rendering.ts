@@ -1,3 +1,4 @@
+import { Signal } from "../../_Squeleto/Signals";
 import { Entity } from "../../_Squeleto/entity";
 import { System } from "../../_Squeleto/system";
 import { MapComponent } from "../Components/entitymap";
@@ -8,6 +9,7 @@ export type RenderEntity = Entity & ZindexComponent & MapComponent & ColliderEnt
 
 export class RenderSystem extends System {
   currentMap: string = "";
+  mapChangeSignal = new Signal("mapchange");
   entities: RenderEntity[] = [];
   mapentities: RenderEntity[] = [];
   template: string = `
@@ -16,7 +18,13 @@ export class RenderSystem extends System {
   public constructor(currentMap: string) {
     super("rendering");
     this.currentMap = currentMap;
+    this.mapChangeSignal.listen(this.mapchange);
   }
+
+  mapchange = (signalData: CustomEvent) => {
+    console.log(signalData);
+    this.currentMap = signalData.detail.params[0];
+  };
 
   public processEntity(entity: RenderEntity): boolean {
     return entity.zindex != null && entity.map == this.currentMap && entity.collider.colliderBody != undefined;

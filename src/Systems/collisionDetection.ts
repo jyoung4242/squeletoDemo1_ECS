@@ -69,19 +69,28 @@ export class CollisionDetectionSystem extends System {
     UI.queue(() => {
       this.ctx = (this.cnv as HTMLCanvasElement).getContext("2d");
     });
+
+    console.log("map data", this.mapdata);
   }
 
-  mapchange(signalData: any) {
+  mapchange = (signalData: any) => {
     console.log("mapchange", signalData.detail.params);
     //find new mapname in mapData
-    const newmap = signalData.details[2];
+    const newmap = signalData.detail.params[0];
+    console.log(this.mapdata);
+
     const mapIndex = this.mapdata.findIndex(map => map.name == newmap);
     if (mapIndex == -1) throw new Error("invalid map selected");
 
     this.currentMap = newmap;
+    console.log("map changed to: ", newmap, this.currentMap);
+
     this.eraseEntityData();
     this.loadWallsTriggers();
-  }
+    this.loadEntities(this.entities);
+
+    console.log(this.currentMap, mapIndex, this.dc.all());
+  };
 
   resetMapTrigger = (signalData: any) => {
     let [id, mapName] = signalData.detail.params;
@@ -94,10 +103,13 @@ export class CollisionDetectionSystem extends System {
   };
 
   eraseEntityData() {
+    console.log("erasing detect collisions");
+
     this.dc.clear();
+    console.log(this.dc.all());
   }
 
-  loadWallsTriggers() {
+  loadWallsTriggers = () => {
     const currentMapData = this.mapdata.find(map => map.name == this.currentMap);
     if (currentMapData == undefined) throw new Error("invalid map selected");
 
@@ -118,7 +130,8 @@ export class CollisionDetectionSystem extends System {
         );
       }
     );
-  }
+    console.log(this.dc.all());
+  };
 
   createWallBody(position: Vector, size: Vector, map: string): any {
     return Object.assign(new Box({ x: position.x, y: position.y }, size.x, size.y, { isStatic: true }), {
@@ -142,18 +155,28 @@ export class CollisionDetectionSystem extends System {
     });
   }
 
-  loadEntities(entities: ColliderEntity[]) {
+  loadEntities = (entities: ColliderEntity[]) => {
+    //console.log(entities);
+
     entities.forEach(ent => {
       if (ent.collider != null) {
-        this.dc.insert(ent.collider.colliderBody as Box);
+        //console.log(ent.map, this.currentMap);
+        if (ent.map == this.currentMap) {
+          console.log("in entity insert:", ent, this.currentMap);
+          this.dc.insert(ent.collider.colliderBody as Box);
+        }
       }
       if (ent.collider.interactor) this.dc.insert(ent.collider.interactor.body);
+      //console.log(this.dc.all());
     });
-  }
+  };
 
   // update routine that is called by the gameloop engine
   public update(deltaTime: number, now: number, entities: ColliderEntity[]): void {
     this.dc.update();
+    this.entities = entities;
+    console.log(this.dc.all());
+
     //debug drawing to canvas
     if (this.ctx && this.cnv && this.debug) {
       this.ctx.clearRect(0, 0, this.cnv?.width, this.cnv?.height);
@@ -172,9 +195,11 @@ export class CollisionDetectionSystem extends System {
 
     const collisionEntities = this.dc.all();
     //@ts-ignore
+    const filteredCollisionEntities = collisionEntities.filter(ent => ent.map == this.currentMap);
+    //@ts-ignore
     const interactor = collisionEntities.find(ent => ent.type == "interactor");
 
-    collisionEntities.forEach(ent => {
+    filteredCollisionEntities.forEach(ent => {
       //@ts-ignore
       if (ent.type == "player") return;
 

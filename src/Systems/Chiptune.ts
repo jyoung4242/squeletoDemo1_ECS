@@ -104,6 +104,8 @@ export class Chiptune {
     return parseInt(v, 16);
   }
   restore(code: SaveCode): State {
+    console.log(code);
+
     const codeString = code.slice(2);
     const key = this.unhex(codeString.slice(0, 2)) as ChipTuneTypes.Key;
     const scale = this.unhex(codeString.slice(2, 4)) === 0 ? music.scales.major : music.scales.minor;
@@ -111,6 +113,8 @@ export class Chiptune {
     const bpm = this.unhex(codeString.slice(6, 8));
     const songIndex = this.unhex(codeString.slice(8, 10));
     const seedCode = codeString.slice(10);
+    console.log(codeString.slice(6, 8));
+    console.log(parseInt(codeString.slice(6, 8)));
     return {
       bpm,
       key,

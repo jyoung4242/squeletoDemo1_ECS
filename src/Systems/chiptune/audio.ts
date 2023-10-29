@@ -86,12 +86,12 @@ function Audio(ctx: AudioContext) {
     function noteOn(note: number, glide: number = 0) {
       const glideTime = glide / 10;
       slide(freq, A0Frequency * 2 ** (note / 12), glideTime);
-      console.log(level, level * sustain);
-      console.log("gain", gain);
+      //console.log(level, level * sustain);
+      //console.log("gain", gain);
 
       set(gain, level);
       towards(gain, level * sustain, decay);
-      console.log(gain.value);
+      //console.log(gain.value);
     }
     function noteOff() {
       slide(gain, 0, release);

@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@peasy-lib/peasy-assets": "latest",
+    "@peasy-lib/peasy-audio": "^0.1.0",
     "@peasy-lib/peasy-engine": "latest",
     "@peasy-lib/peasy-input": "latest",
     "@peasy-lib/peasy-states": "latest",

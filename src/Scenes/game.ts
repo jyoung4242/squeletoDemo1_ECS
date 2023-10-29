@@ -1,47 +1,40 @@
-// Import all your Squeleto Modules
+// Import all your Squeleto and Peasy Modules
 import { Scene, SceneManager } from "../../_Squeleto/Scene";
 import { Assets } from "@peasy-lib/peasy-assets";
+import { Audio } from "@peasy-lib/peasy-audio";
 import { Engine } from "@peasy-lib/peasy-engine";
-import { StoryFlagManager } from "../PlugIns/StoryFlagManager";
 import { Chiptune } from "../Systems/Chiptune";
-import { ParticleSystem } from "../PlugIns/Particles";
 import { State } from "@peasy-lib/peasy-states";
 import { UI } from "@peasy-lib/peasy-ui";
+import { Vector } from "../../_Squeleto/Vector";
+import { Entity } from "../../_Squeleto/entity";
+import { System } from "../../_Squeleto/system";
+import { Signal } from "../../_Squeleto/Signals";
+import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../main";
 
-// Next import your specific game content (Objects, Maps,etc...)
+// Next import your specific game content (Maps,etc...)
 import { Kitchen } from "../Maps/kitchen";
 import { OutsideMap } from "../Maps/outside";
 
-import { Player } from "../Game Objects/Player";
-import { Counter } from "../Game Objects/Counter";
-import { Bookshelf } from "../Game Objects/Bookshelf";
-import { NPC1 } from "../Game Objects/npc1";
-import { Planter } from "../Game Objects/planter";
-import { PizzaThingy } from "../Game Objects/pizzathingy";
-import { bookCaseParticleSystem } from "../Particles/bookcaseParticles";
-
-// Finally Import your custom plug-ins
-import { DialogManager } from "../PlugIns/DialogueManager";
+// Import your entities
 import { HeroEntity } from "../Entities/hero";
-import { Vector } from "../../_Squeleto/Vector";
 import { bookshelfEntity } from "../Entities/bookshelf";
 import { CounterEntity } from "../Entities/counter";
 import { NPCEntity } from "../Entities/npc2";
-import { Entity } from "../../_Squeleto/entity";
-import { System } from "../../_Squeleto/system";
+
+// Finally Import your systems
 import { CameraFollowSystem } from "../Systems/CameraFollow";
 import { MovementSystem } from "../Systems/movement";
 import { KeyboardSystem } from "../Systems/keyboard";
 import { AnimatedSpriteSystem } from "../Systems/animatedSprite";
 import { ColliderEntity, CollisionDetectionSystem } from "../Systems/collisionDetection";
 import { RenderSystem } from "../Systems/Rendering";
-import { Signal } from "../../_Squeleto/Signals";
 import { EventSystem } from "../Systems/Events";
 import { StoryFlagSystem } from "../Systems/StoryFlags";
 import { interactionSystem } from "../Systems/Interactions";
-
 import { Dialogue } from "../Systems/dialog";
-import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../main";
+import { PlanterEntity } from "../Entities/planter";
+import { PizzaSignEntity } from "../Entities/pizzasign";
 
 // All Squeleto Scenes are an extension of the Scene Class
 export class Game extends Scene {
@@ -50,36 +43,27 @@ export class Game extends Scene {
   entities: Entity[] = [];
   renderedEntities: Entity[] = [];
   Systems: System[] = [];
-  //****************************************** */
-  // dm name here is critical for peasy bindings, cause they have to match what's in the plugin
-  // when using plugins, be very careful how you access them
-  //****************************************** */
-  //dm = new DialogManager();
-  // psystems = new bookCaseParticleSystem(Assets);
-
-  // StoryFlag system uses a default set of conditions that gets passed around
-  // If larger, this can be brought in from its own module
-  storyFlags = {
-    bookcaseVisits: false,
-  };
-  sm = new StoryFlagManager(this.storyFlags);
 
   /****************************************************
    * plug-ins are inserted after the renderer to ensure
    * they render on top of the game
    ****************************************************/
-  public template = `<scene-layer class="scene" style="width: 100%; height: 100%; position: relative; top: 0; left:0; color: white;">
-  
-  < \${ System === } \${ System <=* Systems }>
+  public template = `
+  <scene-layer class="scene" style="width: 100%; height: 100%; position: relative; top: 0; left:0; color: white;">
+    < \${ System === } \${ System <=* Systems }>
   </scene-layer>`;
 
   bgm: Chiptune | undefined | null;
 
   public async enter(previous: State | null, ...params: any[]): Promise<void> {
+    //Loading Audio
+    Audio.initialize({ listener: { position: { x: SceneManager.viewport.half.x, y: SceneManager.viewport.half.y } } });
+
     // **************************************
     // Loading Assets
     // **************************************
     Assets.initialize({ src: "../src/Assets/" });
+
     await Assets.load([
       "lower.png",
       "DemoUpper.png",
@@ -99,6 +83,8 @@ export class Game extends Scene {
       "spark.mp3",
       "npcAvatar.png",
       "heroAvatar.png",
+      { name: "charge", src: "charge.wav" },
+      { name: "walk", src: "walk.wav" },
     ]);
 
     // *************************************
@@ -109,7 +95,7 @@ export class Game extends Scene {
       {
         name: "maplower",
         parallax: 0,
-        image: Assets.image("lower").src,
+        image: Assets.image(Kitchen.lower).src,
         size: { x: 192, y: 192 },
         position: { x: 192 / 2, y: 192 / 2 },
       },
@@ -117,10 +103,11 @@ export class Game extends Scene {
       {
         name: "mapupper",
         parallax: 0,
-        image: Assets.image("DemoUpper").src,
+        image: Assets.image(Kitchen.upper).src,
         size: { x: 192, y: 192 },
         position: { x: 192 / 2, y: 192 / 2 },
       },
+
       {
         name: "dialog",
         size: { x: VIEWPORT_WIDTH, y: VIEWPORT_HEIGHT },
@@ -136,19 +123,18 @@ export class Game extends Scene {
     if (dialog) UI.create(dialog.element, new Dialogue(), Dialogue.template);
 
     // **************************************
-    // Load Objects
+    // Load Entities
     // **************************************
     this.entities.push(bookshelfEntity.create(new Vector(48, 48)));
     this.entities.push(CounterEntity.create(new Vector(112, 96)));
     let hero = HeroEntity.create(new Vector(60, 60));
-
     this.entities.push(hero);
     this.entities.push(NPCEntity.create(new Vector(32, 96)));
+    this.entities.push(PlanterEntity.create(new Vector(112, 128)));
+    this.entities.push(PizzaSignEntity.create(new Vector(144, 156)));
 
-    const dc = new CollisionDetectionSystem([Kitchen], "kitchen", false);
+    const dc = new CollisionDetectionSystem([Kitchen, OutsideMap], "kitchen", false);
     dc.loadEntities(this.entities as ColliderEntity[]);
-
-    console.log(this.entities);
 
     this.Systems.push(
       new CameraFollowSystem(),
@@ -162,8 +148,8 @@ export class Game extends Scene {
     );
 
     // Turn on BGM
-    this.bgm = new Chiptune("0x090100700135583f70");
-    this.bgm.attenuate(0.05); //.1 is max, 0 is mute
+    //this.bgm = new Chiptune("0x090100700135583f70");
+    //this.bgm.attenuate(0.001); //.1 is max, 0 is mute
 
     StoryFlagSystem.setStoryFlagValue("startOfGame", true);
 
@@ -179,6 +165,7 @@ export class Game extends Scene {
 
   update = (deltaTime: number) => {
     this.Systems.forEach(sys => sys.update(deltaTime, performance.now(), this.entities));
+    Audio.update();
   };
 
   public exit() {}

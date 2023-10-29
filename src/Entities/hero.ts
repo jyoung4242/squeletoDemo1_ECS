@@ -45,6 +45,8 @@ export class HeroEntity {
     return Entity.create({
       id: id,
       components: {
+        actions: { data: ["stand", "walk"] },
+        name: "hero",
         position: startingVector,
         zindex: 0,
         size: { data: [32, 32] },

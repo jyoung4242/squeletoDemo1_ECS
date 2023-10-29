@@ -45,3 +45,7 @@ body {
     --pixel-size: 1;
   }
 }
+
+.transition {
+  background-color: antiquewhite;
+}
