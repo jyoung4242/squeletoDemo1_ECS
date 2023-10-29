@@ -13,7 +13,7 @@ import { Game } from "./Scenes/game";
 //StoryFlags(global)
 import { StoryFlagSystem } from "./Systems/StoryFlags";
 
-// Setting up Viewport with a HUD layer and the Game layer
+// Setting up Viewport
 export const VIEWPORT_WIDTH = 400;
 const ASPECT_RATIO = 16 / 9;
 export const VIEWPORT_HEIGHT = VIEWPORT_WIDTH / ASPECT_RATIO;
