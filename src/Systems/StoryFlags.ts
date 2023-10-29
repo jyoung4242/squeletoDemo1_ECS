@@ -1,3 +1,14 @@
+/*****************************************************************************
+ * System: StoryFlags
+ * Components Required: n/a
+ * Signals: n/a
+ *
+ * Description:
+ * this system which is global across all scenes (owned by main.ts) tracks
+ * a global object of data that can be set/read to change the behavior of entities
+ * and help drive the story forward
+ *******************************************************************************/
+
 export class StoryFlagSystem {
   static storyflags: Record<string, any> = {};
 
@@ -10,8 +21,6 @@ export class StoryFlagSystem {
   }
 
   static setStoryFlagValue(label: string, value: any) {
-    //console.log(label, value);
-
     this.storyflags[label] = value;
   }
 

@@ -1,3 +1,16 @@
+/*****************************************************************************
+ * System: Keyboard
+ * Components Required: KeyboardComponent, VelocityComponent,animatedSpriteEntity
+ * Signals: pauseSignal, interactSignal, cutsceneSignal, confirmSignal
+ *
+ * Description:
+ * each KeyboardComponent entity (usually just one), on each update loop will read
+ * the designation action tied to a keypress
+ * this uses the Peasy-input mapping library, which maps actions to inputs
+ * the update changes the entities 'state' of idle/walk, and direction
+ * it also set's the entities velocity
+ ******************************************************************************/
+
 import { Entity } from "../../_Squeleto/entity";
 import { System } from "../../_Squeleto/system";
 import { KeyboardComponent } from "../Components/keyboard";
@@ -108,17 +121,13 @@ export class KeyboardSystem extends System {
   }
 
   public processEntity(entity: KeyboardEntity): boolean {
-    // return the test to determine if the entity has the correct properties
     return entity.keyboard != null && entity.velocity != null && entity.spritesheet != null;
   }
 
   // update routine that is called by the gameloop engine
   public update(deltaTime: number, now: number, entities: KeyboardEntity[]): void {
-    //console.log("updating keyboard");
     Input.update(deltaTime);
     entities.forEach(entity => {
-      // This is the screening for skipping entities that aren't impacted by this system
-      // if you want to impact ALL entities, you can remove this
       if (!this.processEntity(entity)) {
         return;
       }

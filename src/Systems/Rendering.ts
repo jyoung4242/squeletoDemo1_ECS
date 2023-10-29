@@ -1,3 +1,14 @@
+/*****************************************************************************
+ * System: Rendering
+ * Components Required: ZindexComponent & MapComponent & ColliderEntity
+ * Signals: mapchange
+ *
+ * Description:
+ * this system updates not based on entities, but for the collective, and it
+ * renders z-order properly based on collider position
+ * ONLY renders entities that belong on this map... so maps change via signal
+ ******************************************************************************/
+
 import { Signal } from "../../_Squeleto/Signals";
 import { Entity } from "../../_Squeleto/entity";
 import { System } from "../../_Squeleto/system";
@@ -22,7 +33,6 @@ export class RenderSystem extends System {
   }
 
   mapchange = (signalData: CustomEvent) => {
-    console.log(signalData);
     this.currentMap = signalData.detail.params[0];
   };
 

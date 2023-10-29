@@ -1,8 +1,17 @@
+/*****************************************************************************
+ * System: Interactions
+ * Components Required: InteractionComponent
+ * Signals: interactTrigger, sendEventSignal
+ *
+ * Description:
+ * This checks the interaction flag that is set/cleared by signals to see if a
+ * cutscene should be fired based on the actions array for each entity
+ ******************************************************************************/
+
 import { Signal } from "../../_Squeleto/Signals";
 import { Entity } from "../../_Squeleto/entity";
 import { System } from "../../_Squeleto/system";
 import { InteractionComponent } from "../Components/interactions";
-import { StoryFlagSystem } from "./StoryFlags";
 
 // type definition for ensuring the entity template has the correct components
 // ComponentTypes are defined IN the components imported
@@ -23,35 +32,29 @@ export class interactionSystem extends System {
     });
     this.interactTrigger.listen(() => {
       if (!this.checkInteraction) this.checkInteraction = true;
-      //console.log("setting check interaction flag");
     });
   }
 
   public processEntity(entity: InteractionEntity): boolean {
-    // return the test to determine if the entity has the correct properties
     return entity.interactions.isEnabled;
   }
 
   // update routine that is called by the gameloop engine
   public update(deltaTime: number, now: number, entities: InteractionEntity[]): void {
     entities.forEach(entity => {
-      // This is the screening for skipping entities that aren't impacted by this system
-      // if you want to impact ALL entities, you can remove this
       if (!this.processEntity(entity)) {
         return;
       }
 
       if (this.isCutscenePlaying) return;
-
       if (this.checkInteraction && entity.interactions && entity.interactions.isActive) {
         let actions = entity.interactions.actions;
-        //console.log("in check interaction");
 
+        //depending on the types of actions listed i.e. storyflags and such...
         for (let action of actions) {
-          //this is the conditional check of
+          //if the condition for selecting that action is met...
           if (action.condition) {
-            //  console.log("inside storyflag check");
-
+            //run cutscene
             this.sendEventSignal.send([action.actions]);
             return;
           }

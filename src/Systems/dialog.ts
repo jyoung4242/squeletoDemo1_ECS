@@ -1,3 +1,16 @@
+/*****************************************************************************
+ * System: Dialog
+ * Components Required: none, non-ECS system
+ * Signals: confirmSignal, dialogSignal, cutsceneSignal, endSignal
+ *
+ * Description:
+ * this system is owned at the viewport level, which is where the template UI resides
+ * if a gameEvent of DialogEvent is fired, this UI gets rendered
+ * there are 'simple' Dialogs, which just shows message and an 'end' button,
+ * or you can pass a JSON object into the DialogEvent and you can customize
+ * inluding options displayed and selectable that changes storyflags
+ ******************************************************************************/
+
 import { Signal } from "../../_Squeleto/Signals";
 import { Assets } from "@peasy-lib/peasy-assets";
 

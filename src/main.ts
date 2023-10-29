@@ -22,7 +22,7 @@ SceneManager.viewport = Viewport.create({ size: { x: VIEWPORT_WIDTH, y: VIEWPORT
 // Components
 LoadComponents();
 
-//Setup SToryflags
+//Setup Storyflags
 StoryFlagSystem.init();
 
 //Load Scenes

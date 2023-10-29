@@ -1,4 +1,21 @@
-//Collision Detections
+/*****************************************************************************
+ * System: CollisionDetection
+ *
+ * Components Required: ColliderComponent, SizeComponent, PositionComponent,
+ * MapComponent, InteractionComponent, KeyboardComp
+ *
+ * Signals: mapchange, eventSignal, mapTriggerReset
+ *
+ * Description:
+ * uses the detect-collisions npm package for tracking entities and their position
+ * in space
+ * has a debug canvas that can be used
+ * defines the types of collision resolutions based on entitytype
+ * tracks the current map, and on change, cleans out the walls/triggers
+ * and reloads the new map walls and triggers, then re-inserts the entities
+ * on Update() runs the checkCollision() method on the hero player against all
+ * entities and then resolves based on entity type
+ ******************************************************************************/
 
 import { Entity } from "../../_Squeleto/entity";
 import { System } from "../../_Squeleto/system";
@@ -69,8 +86,6 @@ export class CollisionDetectionSystem extends System {
     UI.queue(() => {
       this.ctx = (this.cnv as HTMLCanvasElement).getContext("2d");
     });
-
-    //console.log("map data", this.mapdata);
   }
 
   mapchange = (signalData: any) => {

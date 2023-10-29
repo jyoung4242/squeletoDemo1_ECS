@@ -1,3 +1,18 @@
+/*****************************************************************************
+ * System: Events
+ * Components Required: EventComponent
+ * Signals: EventSignal, cutSceneSignal
+ *
+ * Description:
+ * there are two forms of events running, each Entity's behavior loop in the
+ * EventComponent, or a cutscene that is from GameEvents listed in actions arrays
+ *
+ * Both execute VERY similarly, except the cutscene runs once, and the BL runs constantly
+ * the event loop iterates over the actions arrays and executes the GameEvent.init()
+ * method for each one, which has a status value for each event, until that
+ * event status goes to complete, then it moves on to next event in array
+ ******************************************************************************/
+
 import { Signal } from "../../_Squeleto/Signals";
 import { Entity } from "../../_Squeleto/entity";
 import { System } from "../../_Squeleto/system";
@@ -27,13 +42,10 @@ export class EventSystem extends System {
     return entity.behaviors != null;
   }
 
+  //Signal Handler for running cutscenes
   runCutscene = (SignalData: CustomEvent) => {
-    //console.log("signal received for custom cutscene");
-
     this.cutsceneIndex = 0;
     this.cutsceneSequence = [...SignalData.detail.params[0]];
-    //console.log(this.cutsceneSequence);
-
     this.isCutsceneRunning = true;
     this.cutSceneSignal.send([true]);
   };
@@ -41,16 +53,11 @@ export class EventSystem extends System {
   // update routine that is called by the gameloop engine
   update = (deltaTime: number, now: number, entities: EventEntity[]): void => {
     if (!this.isCutsceneRunning) {
-      //|| this.isBehaviorEventActive
       //THIS IS THE BEHAVIOR LOOPS
-      //console.log("in BL");
-
       entities.forEach(entity => {
         if (!this.processEntity(entity)) return;
 
         let { currentBehavior, behaviorIndex, behaviors, currentEvent } = entity.behaviors;
-
-        //@ts-ignore
 
         if (currentEvent == undefined) {
           //setup current Event
@@ -82,30 +89,21 @@ export class EventSystem extends System {
         }
       });
     } else {
-      //@ts-ignore
-      //console.log("beginning of cutscene handler");
-
       if (this.cutsceneCurrentEvent == undefined) {
         //setup current Event
-
         this.cutsceneCurrentEvent = this.cutsceneSequence[this.cutsceneIndex];
-        //console.log("setting event", this.cutsceneCurrentEvent);
       }
 
       if (this.cutsceneCurrentEvent == undefined) return;
-      //console.log(this.cutsceneCurrentEvent);
 
       if (this.cutsceneCurrentEvent.eventStatus == "idle") {
         this.cutsceneCurrentEvent.init(entities);
-        //console.log("cutscene init");
 
         return;
       } else if (this.cutsceneCurrentEvent.eventStatus == "running") {
         this.cutsceneCurrentEvent.update();
-        //console.log("cutscene running");
         return;
       } else if (this.cutsceneCurrentEvent.eventStatus == "complete") {
-        //console.log("cutscene complete");
         this.cutsceneCurrentEvent.reset();
         this.cutsceneIndex++;
         this.cutsceneCurrentEvent = undefined;
@@ -115,7 +113,6 @@ export class EventSystem extends System {
           this.isCutsceneRunning = false;
           this.cutsceneSequence = [];
           this.cutSceneSignal.send([false]);
-          //console.log("ending cutscene");
         }
         return;
       }

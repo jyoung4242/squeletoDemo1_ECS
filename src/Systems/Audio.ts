@@ -1,9 +1,16 @@
+/*****************************************************************************
+ * System: Audio
+ * Components Required: ??????????
+ * Signals: none
+ *
+ * Description:
+ * ?????
+ ******************************************************************************/
+
 import { Entity } from "../../_Squeleto/entity";
 import { System } from "../../_Squeleto/system";
 import { actionComponent } from "../Components/actions";
 
-// type definition for ensuring the entity template has the correct components
-// ComponentTypes are defined IN the components imported
 export type AudioEntity = Entity & actionComponent;
 
 export class AudioSystem extends System {

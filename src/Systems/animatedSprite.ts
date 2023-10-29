@@ -1,10 +1,21 @@
+/*****************************************************************************
+ * System: AnimatedSprite
+ * Components Required: SpriteSheetComponent, KeyboardComponent
+ * Signals: none
+ *
+ * Description:
+ * each entity with Spritesheet component has an animation timer, and a
+ * defined animation sequence configuration
+ * this system increments the timer for each entity, and when limit hit,
+ * changes the spritesheet position based on animation sequence, and restarts
+ * animation timer
+ ******************************************************************************/
+
 import { Entity } from "../../_Squeleto/entity";
 import { System } from "../../_Squeleto/system";
 import { KeyboardComponent } from "../Components/keyboard";
 import { SpriteSheetComponent } from "../Components/spritesheet";
 
-// type definition for ensuring the entity template has the correct components
-// ComponentTypes are defined IN the components imported
 export type animatedSpriteEntity = Entity & SpriteSheetComponent & KeyboardComponent;
 
 export class AnimatedSpriteSystem extends System {

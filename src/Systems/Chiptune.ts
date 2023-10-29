@@ -3,7 +3,7 @@
   https://www.vitling.xyz/toys/autotracker/
 
   This is my attribution to that project, and a link to the license of it below.
-  Modifications to the source include refactoring tracker.ts into an importable class for Squeleto Game Framework
+  Modifications to the source include refactoring tracker.ts into an import-able class for Squeleto Game Framework
 
   Copyright 2020 David Whiting
   This work is licensed under a Creative Commons Attribution 4.0 International License
