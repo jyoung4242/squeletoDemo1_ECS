@@ -64,7 +64,7 @@ export class Game extends Scene {
     // **************************************
     // Loading Assets
     // **************************************
-    Assets.initialize({ src: "../src/Assets/" });
+    Assets.initialize({ src: "./src/Assets/" });
     await Assets.load([
       "lower.png",
       "DemoUpper.png",
@@ -75,17 +75,11 @@ export class Game extends Scene {
       "npc2.png",
       "outsideUpper.png",
       "outsidemod.png",
-      "planter.png",
-      "pizzazone.png",
-      "step.wav",
-      "error.wav",
-      "door.mp3",
-      "spark.png",
-      "spark.mp3",
       "npcAvatar.png",
       "heroAvatar.png",
+      "planter.png",
+      "pizzazone.png",
       { name: "charge", src: "charge.wav" },
-      { name: "walk", src: "walk.wav" },
     ]);
 
     // *************************************
