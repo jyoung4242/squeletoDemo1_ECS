@@ -350,15 +350,27 @@ const collisionResolution = (
       } else if (npc.velocity.x != 0) {
         if (response.overlapN.x != 0) {
           entityB = entities.find(e => e.collider.colliderBody == b);
-          if (!entityB) return;
-
+          entityA = entities.find(e => e.collider.colliderBody == a);
+          if (!entityB || !entityA) return;
+          console.log("x is non zero", overlap.x);
           //stop moving
           b.setPosition(b.x + overlap.x, b.y + overlap.y);
           entityB.position.x = entityB.position.x + overlap.x;
           entityB.position.y = entityB.position.y + overlap.y;
+
+          //CODE BELOW IS TO PREVENT PLAYER FROM PUSHING NPC
+          //@ts-ignore
+          if (overlap.x < 0) {
+            //@ts-ignore
+            if (entityA.velocity.x < 0) entityA.velocity.x = 0;
+          } else if (overlap.x > 0) {
+            //@ts-ignore
+            if (entityA.velocity.x > 0) entityA.velocity.x = 0;
+          }
         } else {
           entityA = entities.find(e => e.collider.colliderBody == a);
           if (!entityA) return;
+          console.log("x is zero");
 
           //stop moving
           a.setPosition(a.x - overlap.x, a.y - overlap.y);
@@ -368,16 +380,28 @@ const collisionResolution = (
       } else if (npc.velocity.y != 0) {
         if (response.overlapN.y != 0) {
           entityB = entities.find(e => e.collider.colliderBody == b);
-          if (!entityB) return;
+          entityA = entities.find(e => e.collider.colliderBody == a);
+          if (!entityB || !entityA) return;
+          console.log("y is non zero");
 
           //stop moving
           b.setPosition(b.x + overlap.x, b.y + overlap.y);
           entityB.position.x = entityB.position.x + overlap.x;
           entityB.position.y = entityB.position.y + overlap.y;
+
+          //CODE BELOW IS TO PREVENT PLAYER FROM PUSHING NPC
+          //@ts-ignore
+          if (overlap.y < 0) {
+            //@ts-ignore
+            if (entityA.velocity.y < 0) entityA.velocity.y = 0;
+          } else if (overlap.y > 0) {
+            //@ts-ignore
+            if (entityA.velocity.y > 0) entityA.velocity.y = 0;
+          }
         } else {
           entityA = entities.find(e => e.collider.colliderBody == a);
           if (!entityA) return;
-
+          console.log("y is zero");
           //stop moving
           a.setPosition(a.x - overlap.x, a.y - overlap.y);
           entityA.position.x = entityA.position.x - overlap.x;
