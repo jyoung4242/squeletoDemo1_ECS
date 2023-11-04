@@ -13,11 +13,15 @@ export type PassiveSoundEntity = Entity & MapComponent & NameComponent & Passive
 export class PassiveSoundSystem extends System {
   mapChangeSignal: Signal = new Signal("mapchange");
   currentMap: string = "kitchen";
-
+  isCutsceneActive = false;
+  cutsSceneSignal: Signal = new Signal("cutscene");
   public constructor() {
     super("passiveSound");
     this.mapChangeSignal.listen((signalData: CustomEvent) => {
       this.currentMap = signalData.detail.params[0];
+    });
+    this.cutsSceneSignal.listen((signalData: CustomEvent) => {
+      this.isCutsceneActive = signalData.detail.params[0];
     });
   }
 
@@ -33,6 +37,17 @@ export class PassiveSoundSystem extends System {
 
       if (entity.map != this.currentMap) {
         //make sure no audio playing
+        if (entity.passiveSound.sound) {
+          entity.passiveSound.sound.stop();
+          entity.passiveSound.sound.update();
+          Audio.removeSound(entity.passiveSound.sound);
+          entity.passiveSound.currentState = "default";
+          entity.passiveSound.sound = undefined;
+        }
+        return;
+      }
+
+      if (this.isCutsceneActive) {
         if (entity.passiveSound.sound) {
           entity.passiveSound.sound.stop();
           entity.passiveSound.sound.update();

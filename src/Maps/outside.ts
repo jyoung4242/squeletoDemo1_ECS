@@ -56,7 +56,7 @@ export class OutsideMap {
     {
       x: 64,
       y: 76,
-      w: 44,
+      w: 90,
       h: 18,
       color: "red",
     },
