@@ -6,14 +6,16 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "Bobs YourUncle",
   "license": "ISC",
   "dependencies": {
     "@peasy-lib/peasy-assets": "latest",
-    "@peasy-lib/peasy-audio": "^0.1.0",
+    "@peasy-lib/peasy-audio": "^0.1.1",
     "@peasy-lib/peasy-engine": "latest",
     "@peasy-lib/peasy-input": "latest",
     "@peasy-lib/peasy-states": "latest",
@@ -25,10 +27,14 @@
     "uuid": "latest"
   },
   "devDependencies": {
+    "@types/jsdom": "^21.1.4",
     "@types/lodash": "latest",
     "@types/uuid": "latest",
+    "@vitest/coverage-v8": "^0.34.6",
+    "jsdom": "^22.1.0",
     "json": "latest",
     "typescript": "latest",
-    "vite": "latest"
+    "vite": "latest",
+    "vitest": "^0.34.6"
   }
 }

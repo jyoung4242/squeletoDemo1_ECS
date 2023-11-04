@@ -1,5 +1,5 @@
 import { State, States } from "@peasy-lib/peasy-states";
-import { UI, UIView } from "@peasy-lib/peasy-ui";
+import { UIView } from "@peasy-lib/peasy-ui";
 import { System } from "./system";
 import { Viewport } from "@peasy-lib/peasy-viewport";
 
