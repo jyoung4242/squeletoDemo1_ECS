@@ -16,12 +16,10 @@
 import { GameEvent } from "../Systems/Events";
 import { Entity } from "../../_Squeleto/entity";
 import { direction } from "./walk";
-import { Signal } from "../../_Squeleto/Signals";
 
 export class StandEvent extends GameEvent {
   direction: direction;
   duration: number;
-  actionSignal = new Signal("changePassiveState");
 
   constructor(who: Entity | null, params: [...any]) {
     super(who, params);
@@ -34,7 +32,6 @@ export class StandEvent extends GameEvent {
     return new Promise(resolve => {
       //@ts-ignore
       if (this.who && Object.hasOwn(this.who, "spritesheet")) {
-        this.actionSignal.send([(this.who as Entity).id, "default"]);
         //@ts-ignore
         this.who.spritesheet[1].currentSequence = `idle-${this.direction}`;
       }

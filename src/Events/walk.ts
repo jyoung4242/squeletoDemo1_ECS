@@ -21,7 +21,6 @@ import { Vector } from "../../_Squeleto/Vector";
 import { VelocityComponent } from "../Components/velocity";
 import { SpriteSheetComponent } from "../Components/spritesheet";
 import { PositionComponent } from "../Components/positionComponent";
-import { Signal } from "../../_Squeleto/Signals";
 
 export type direction = "right" | "left" | "up" | "down";
 
@@ -29,7 +28,7 @@ export class WalkEvent extends GameEvent {
   direction: direction;
   who: (Entity & VelocityComponent & SpriteSheetComponent & PositionComponent) | null;
   targetValue: number = 0;
-  actionSignal = new Signal("changePassiveState");
+
   distance: number;
   speed: number;
   resolution: ((value: void | PromiseLike<void>) => void) | undefined;
@@ -87,8 +86,6 @@ export class WalkEvent extends GameEvent {
     return new Promise(resolve => {
       this.resolution = resolve;
       if (this.who) {
-        //send Signal
-        this.actionSignal.send([this.who.id, "walk"]);
         switch (this.direction) {
           case "right":
             this.who.velocity = new Vector(this.speed, 0);
