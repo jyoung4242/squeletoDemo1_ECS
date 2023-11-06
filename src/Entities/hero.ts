@@ -75,7 +75,7 @@ export class HeroEntity {
         passiveSound: {
           data: {
             id: id,
-            volume: 1,
+            volume: 0.05,
             states: { walk: { source: "walk", loop: true } },
           },
         },

@@ -38,8 +38,6 @@ export class PassiveSoundSystem extends System {
       if (entity.map != this.currentMap) {
         //make sure no audio playing
         if (entity.passiveSound.sound) {
-          entity.passiveSound.sound.stop();
-          entity.passiveSound.sound.update();
           Audio.removeSound(entity.passiveSound.sound);
           entity.passiveSound.currentState = "default";
           entity.passiveSound.sound = undefined;
@@ -49,8 +47,6 @@ export class PassiveSoundSystem extends System {
 
       if (this.isCutsceneActive) {
         if (entity.passiveSound.sound) {
-          entity.passiveSound.sound.stop();
-          entity.passiveSound.sound.update();
           Audio.removeSound(entity.passiveSound.sound);
           entity.passiveSound.currentState = "default";
           entity.passiveSound.sound = undefined;
@@ -68,13 +64,12 @@ export class PassiveSoundSystem extends System {
             loop: entity.passiveSound.states[entity.passiveSound.currentState].loop,
             type: "effect",
             autoplay: true,
+            entity: entity as unknown as { position: { x: number; y: number } },
           });
         }
       } else {
         //if stopped moving AND sound active... stop it
         if (entity.passiveSound.sound) {
-          entity.passiveSound.sound.stop();
-          entity.passiveSound.sound.update();
           Audio.removeSound(entity.passiveSound.sound);
           entity.passiveSound.currentState = "default";
           entity.passiveSound.sound = undefined;
@@ -108,8 +103,6 @@ handleStateChange = (signalData: CustomEvent) => {
     //stop existing audio if active
 
     if (this.sound) {
-      this.sound.stop();
-      Audio.update();
       Audio.removeSound(this.sound);
     }
 

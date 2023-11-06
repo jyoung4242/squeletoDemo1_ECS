@@ -62,15 +62,6 @@ export class Game extends Scene {
   public async enter(previous: State | null, ...params: any[]): Promise<void> {
     return new Promise(async resolve => {
       // **************************************
-      // Loading Audio
-      // **************************************
-      try {
-        Audio.initialize({ listener: { position: { x: SceneManager.viewport.half.x, y: SceneManager.viewport.half.y } } });
-      } catch (error) {
-        console.error(error);
-      }
-
-      // **************************************
       // Loading Assets
       // **************************************
       Assets.initialize({ src: "./src/Assets/" });
@@ -161,6 +152,15 @@ export class Game extends Scene {
         new interactionSystem(),
         new PassiveSoundSystem()
       );
+
+      // **************************************
+      // Loading Audio
+      // **************************************
+      try {
+        Audio.initialize({ listener: hero  as unknown as { position: { x: number; y: number } } });
+      } catch (error) {
+        console.error(error);
+      }
 
       // **************************************
       // Load BGM
